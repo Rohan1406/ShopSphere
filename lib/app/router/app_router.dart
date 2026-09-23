@@ -7,11 +7,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       builder: (context, state) {
-        return const Scaffold(
-          body: Center(
-            child: Text('ShopSphere Home'),
-          ),
-        );
+        return const Scaffold(body: Center(child: Text('ShopSphere Home')));
       },
     ),
   ],
