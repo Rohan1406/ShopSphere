@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shopsphere/app/startup/auth_startup_screen.dart';
+import 'package:shopsphere/features/auth/presentation/pages/login_page.dart';
 import 'package:shopsphere/features/auth/presentation/providers/auth_providers.dart';
 import 'package:shopsphere/features/auth/presentation/state/auth_state.dart';
 
@@ -44,7 +45,7 @@ final appRouterProvider = Provider((ref) {
       GoRoute(
         path: '/login',
         builder: (context, state) {
-          return const Scaffold(body: Center(child: Text('ShopSphere Login')));
+          return const LoginPage();
         },
       ),
       GoRoute(
