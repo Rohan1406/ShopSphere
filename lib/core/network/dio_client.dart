@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:shopsphere/core/config/app_config.dart';
-import 'package:shopsphere/core/network/interceptors/auth_interceptor.dart';
 
+import '../config/app_config.dart';
 
 class DioClient {
   DioClient()
@@ -16,9 +15,11 @@ class DioClient {
             'Accept': 'application/json',
           },
         ),
-      ) {
-    dio.interceptors.add(AuthInterceptor());
-  }
+      );
 
   final Dio dio;
+
+  void addInterceptor(Interceptor interceptor) {
+    dio.interceptors.add(interceptor);
+  }
 }
