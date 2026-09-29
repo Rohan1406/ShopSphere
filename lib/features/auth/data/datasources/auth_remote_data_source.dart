@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:shopsphere/core/errors/app_exception.dart';
 import 'package:shopsphere/core/network/api_endpoints.dart';
+import 'package:shopsphere/core/network/dio_error_mapper.dart';
 import 'package:shopsphere/features/auth/data/models/auth_session_model.dart';
 
 abstract interface class AuthRemoteDataSource {
@@ -38,8 +39,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       return AuthSessionModel.fromJson(data);
-    } on DioException {
-      rethrow;
+    } on DioException catch (exception) {
+      throw mapDioException(exception);
     } on AppException {
       rethrow;
     } catch (error) {
@@ -68,8 +69,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const ParsingException(message: 'Refresh response was empty.');
       }
       return AuthSessionModel.fromJson(data);
-    } on DioException {
-      rethrow;
+    } on DioException catch(exception) {
+      throw mapDioException(exception);
     } on AppException {
       rethrow;
     } catch (error) {
