@@ -1,22 +1,31 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shopsphere/app/startup/auth_startup_screen.dart';
-import 'package:shopsphere/features/auth/presentation/pages/login_page.dart';
-import 'package:shopsphere/features/auth/presentation/providers/auth_providers.dart';
-import 'package:shopsphere/features/auth/presentation/state/auth_state.dart';
 
-final appRouterProvider = Provider((ref) {
-  final authState = ref.watch(authNotifierProvider);
+import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/auth/presentation/providers/auth_providers.dart';
+import '../../features/auth/presentation/state/auth_state.dart';
+import '../../features/home/presentation/pages/home_page.dart';
+import '../startup/auth_startup_screen.dart';
+import 'auth_router_refresh.dart';
+
+final appRouterProvider = Provider<GoRouter>((ref) {
+  final authRouterRefresh = AuthRouterRefresh(ref);
+
+  ref.onDispose(authRouterRefresh.dispose);
 
   return GoRouter(
     initialLocation: '/startup',
+    refreshListenable: authRouterRefresh,
+
     redirect: (context, state) {
+      final authState = ref.read(authNotifierProvider);
       final location = state.matchedLocation;
 
       final isStartup = location == '/startup';
       final isLogin = location == '/login';
+
       final isAuthenticated = authState is AuthAuthenticated;
+
       final isLoading = authState is AuthInitial || authState is AuthLoading;
 
       if (isLoading) {
@@ -31,10 +40,13 @@ final appRouterProvider = Provider((ref) {
         if (isLogin || isStartup) {
           return '/home';
         }
+
         return null;
       }
+
       return '/startup';
     },
+
     routes: [
       GoRoute(
         path: '/startup',
@@ -51,7 +63,7 @@ final appRouterProvider = Provider((ref) {
       GoRoute(
         path: '/home',
         builder: (context, state) {
-          return const Scaffold(body: Center(child: Text('ShopSphere Home')));
+          return const HomePage();
         },
       ),
     ],
