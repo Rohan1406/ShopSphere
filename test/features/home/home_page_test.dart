@@ -1,57 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:shopsphere/features/auth/presentation/notifiers/auth_notifier.dart';
-import 'package:shopsphere/features/auth/presentation/providers/auth_providers.dart';
-import 'package:shopsphere/features/auth/presentation/state/auth_state.dart';
-import 'package:shopsphere/features/home/presentation/pages/home_page.dart';
+import 'package:shopsphere/core/result/result.dart';
+import 'package:shopsphere/features/auth/controllers/auth_controller.dart';
+import 'package:shopsphere/features/home/views/pages/home_page.dart';
 
 void main() {
   group('HomePage', () {
     testWidgets('shows ShopSphere home content', (tester) async {
       await tester.pumpWidget(
-        ProviderScope(child: MaterialApp(home: HomePage())),
+        const ProviderScope(child: MaterialApp(home: HomePage())),
       );
 
       expect(find.text('ShopSphere'), findsOneWidget);
-
-      expect(find.text('ShopSphere Home'), findsOneWidget);
-
+      expect(find.text('View Products'), findsOneWidget);
       expect(find.byTooltip('Logout'), findsOneWidget);
     });
 
     testWidgets('calls logout when logout button is tapped', (tester) async {
-      final notifier = _FakeAuthNotifier();
+      final controller = _FakeAuthController();
 
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [authNotifierProvider.overrideWith(() => notifier)],
-          child: MaterialApp(home: HomePage()),
+          overrides: [authControllerProvider.overrideWith(() => controller)],
+          child: const MaterialApp(home: HomePage()),
         ),
       );
 
       await tester.tap(find.byTooltip('Logout'));
-
       await tester.pump();
 
-      expect(notifier.logoutCalled, isTrue);
+      expect(controller.logoutCalled, isTrue);
     });
 
     testWidgets('disables logout while logging out', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            authNotifierProvider.overrideWith(
-              () => _FakeAuthNotifier(initialState: const AuthLoading()),
+            authControllerProvider.overrideWith(
+              () => _FakeAuthController(initialState: const AuthLoading()),
             ),
           ],
-          child: MaterialApp(home: HomePage()),
+          child: const MaterialApp(home: HomePage()),
         ),
       );
 
       final logoutButton = find.byIcon(Icons.logout);
-
       expect(logoutButton, findsOneWidget);
 
       final iconButton = tester.widget<IconButton>(
@@ -63,12 +57,11 @@ void main() {
   });
 }
 
-class _FakeAuthNotifier extends AuthNotifier {
-  _FakeAuthNotifier({AuthState initialState = const AuthAuthenticated()})
+class _FakeAuthController extends AuthController {
+  _FakeAuthController({AuthState initialState = const AuthAuthenticated()})
     : _initialState = initialState;
 
   final AuthState _initialState;
-
   bool logoutCalled = false;
 
   @override
@@ -77,7 +70,8 @@ class _FakeAuthNotifier extends AuthNotifier {
   }
 
   @override
-  Future<void> logout() async {
+  Future<Result<void>> logout() async {
     logoutCalled = true;
+    return const Success(null);
   }
 }

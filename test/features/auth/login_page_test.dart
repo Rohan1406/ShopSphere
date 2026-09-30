@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:shopsphere/features/auth/presentation/notifiers/auth_notifier.dart';
-import 'package:shopsphere/features/auth/presentation/pages/login_page.dart';
-import 'package:shopsphere/features/auth/presentation/providers/auth_providers.dart';
-import 'package:shopsphere/features/auth/presentation/state/auth_state.dart';
+import 'package:shopsphere/core/result/result.dart';
+import 'package:shopsphere/features/auth/controllers/auth_controller.dart';
+import 'package:shopsphere/features/auth/models/auth_session.dart';
+import 'package:shopsphere/features/auth/views/pages/login_page.dart';
 
 void main() {
   group('LoginPage', () {
@@ -75,13 +74,13 @@ void main() {
     testWidgets(
       'calls login when form is valid',
       (tester) async {
-        final notifier = _FakeAuthNotifier();
+        final controller = _FakeAuthController();
 
         await tester.pumpWidget(
           ProviderScope(
             overrides: [
-              authNotifierProvider.overrideWith(
-                () => notifier,
+              authControllerProvider.overrideWith(
+                () => controller,
               ),
             ],
             child: const MaterialApp(
@@ -106,9 +105,9 @@ void main() {
 
         await tester.pump();
 
-        expect(notifier.loginCalled, isTrue);
-        expect(notifier.email, 'rohan@example.com');
-        expect(notifier.password, 'password123');
+        expect(controller.loginCalled, isTrue);
+        expect(controller.email, 'rohan@example.com');
+        expect(controller.password, 'password123');
       },
     );
 
@@ -118,8 +117,8 @@ void main() {
         await tester.pumpWidget(
           ProviderScope(
             overrides: [
-              authNotifierProvider.overrideWith(
-                () => _FakeAuthNotifier(
+              authControllerProvider.overrideWith(
+                () => _FakeAuthController(
                   initialState: const AuthLoading(),
                 ),
               ),
@@ -144,8 +143,8 @@ void main() {
   });
 }
 
-class _FakeAuthNotifier extends AuthNotifier {
-  _FakeAuthNotifier({
+class _FakeAuthController extends AuthController {
+  _FakeAuthController({
     AuthState initialState = const AuthInitial(),
   }) : _initialState = initialState;
 
@@ -161,12 +160,15 @@ class _FakeAuthNotifier extends AuthNotifier {
   }
 
   @override
-  Future<void> login({
+  Future<Result<AuthSession>> login({
     required String email,
     required String password,
   }) async {
     loginCalled = true;
     this.email = email;
     this.password = password;
+    return const Success(
+      AuthSession(accessToken: 'mock_token', refreshToken: 'mock_refresh'),
+    );
   }
 }

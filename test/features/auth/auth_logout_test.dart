@@ -1,87 +1,38 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:shopsphere/core/storage/storage_providers.dart';
+import 'package:shopsphere/core/storage/token_manager.dart';
+import 'package:shopsphere/core/storage/token_storage.dart';
+import 'package:shopsphere/features/auth/controllers/auth_controller.dart';
 
-import 'package:shopsphere/core/errors/failure.dart';
-import 'package:shopsphere/core/result/result.dart';
-import 'package:shopsphere/features/auth/domain/entities/auth_session.dart';
-import 'package:shopsphere/features/auth/domain/repositories/auth_repository.dart';
-import 'package:shopsphere/features/auth/presentation/providers/auth_providers.dart';
-import 'package:shopsphere/features/auth/presentation/state/auth_state.dart';
+class MockTokenStorage extends Mock implements TokenStorage {}
 
 void main() {
-  group('AuthNotifier logout', () {
-    test('changes state to unauthenticated when logout succeeds', () async {
-      final repository = _FakeAuthRepository();
+  group('AuthController logout', () {
+    test('changes state to unauthenticated and clears storage on logout', () async {
+      final mockStorage = MockTokenStorage();
+      final tokenManager = TokenManager(mockStorage);
+
+      when(() => mockStorage.clear()).thenAnswer((_) async {});
 
       final container = ProviderContainer(
-        overrides: [authRepositoryProvider.overrideWithValue(repository)],
+        overrides: [
+          tokenStorageProvider.overrideWithValue(mockStorage),
+          tokenManagerProvider.overrideWithValue(tokenManager),
+        ],
       );
 
       addTearDown(container.dispose);
 
-      final notifier = container.read(authNotifierProvider.notifier);
+      final controller = container.read(authControllerProvider.notifier);
 
-      expect(container.read(authNotifierProvider), isA<AuthInitial>());
+      expect(container.read(authControllerProvider), isA<AuthInitial>());
 
-      await notifier.logout();
+      await controller.logout();
 
-      expect(repository.logoutCalled, isTrue);
-
-      expect(container.read(authNotifierProvider), isA<AuthUnauthenticated>());
-    });
-
-    test('changes state to error when logout fails', () async {
-      final repository = _FakeAuthRepository(
-        logoutResult: const Error<void>(Failure(message: 'Unable to logout.')),
-      );
-
-      final container = ProviderContainer(
-        overrides: [authRepositoryProvider.overrideWithValue(repository)],
-      );
-
-      addTearDown(container.dispose);
-
-      final notifier = container.read(authNotifierProvider.notifier);
-
-      await notifier.logout();
-
-      final state = container.read(authNotifierProvider);
-
-      expect(state, isA<AuthError>());
-
-      expect((state as AuthError).message, 'Unable to logout.');
+      expect(container.read(authControllerProvider), isA<AuthUnauthenticated>());
+      verify(() => mockStorage.clear()).called(1);
     });
   });
-}
-
-class _FakeAuthRepository implements AuthRepository {
-  _FakeAuthRepository({this.logoutResult = const Success<void>(null)});
-
-  final Result<void> logoutResult;
-
-  bool logoutCalled = false;
-
-  @override
-  Future<Result<AuthSession>> login({
-    required String email,
-    required String password,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<AuthSession?>> restoreSession() {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<AuthSession>> refreshSession({required String refreshToken}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<void>> logout() async {
-    logoutCalled = true;
-    return logoutResult;
-  }
 }

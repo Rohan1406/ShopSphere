@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shopsphere/features/auth/presentation/state/auth_state.dart';
+import 'package:shopsphere/features/auth/controllers/auth_controller.dart';
 
 void main() {
   group('AppRouter authentication redirects', () {
