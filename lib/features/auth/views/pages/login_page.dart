@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shopsphere/features/auth/presentation/providers/auth_providers.dart';
-import 'package:shopsphere/features/auth/presentation/state/auth_state.dart';
+import 'package:shopsphere/features/auth/controllers/auth_controller.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -29,7 +28,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     }
 
     await ref
-        .read(authNotifierProvider.notifier)
+        .read(authControllerProvider.notifier)
         .login(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
@@ -38,10 +37,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authNotifierProvider);
+    final authState = ref.watch(authControllerProvider);
     final isLoading = authState is AuthLoading;
 
-    ref.listen<AuthState>(authNotifierProvider, (previous, next) {
+    ref.listen<AuthState>(authControllerProvider, (previous, next) {
       if (next case AuthError(:final message)) {
         ScaffoldMessenger.of(
           context,

@@ -11,6 +11,11 @@ abstract final class AppConfig {
     defaultValue: 'https://api.example.com',
   );
 
+  static const useMockData = bool.fromEnvironment(
+    'USE_MOCK_DATA',
+    defaultValue: true,
+  );
+
   static AppEnvironment get environment {
     return switch (environmentName) {
       'development' => AppEnvironment.development,

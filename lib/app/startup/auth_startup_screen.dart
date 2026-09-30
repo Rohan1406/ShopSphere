@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shopsphere/features/auth/presentation/providers/auth_providers.dart';
+import 'package:shopsphere/features/auth/controllers/auth_controller.dart';
 
 class AuthStartupScreen extends ConsumerStatefulWidget {
   const AuthStartupScreen({super.key});
@@ -13,7 +13,7 @@ class _AuthStartupScreen extends ConsumerState<AuthStartupScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      ref.read(authNotifierProvider.notifier).restoreSession();
+      ref.read(authControllerProvider.notifier).restoreSession();
     });
   }
 
