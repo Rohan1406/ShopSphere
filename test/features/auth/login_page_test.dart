@@ -140,6 +140,36 @@ void main() {
         );
       },
     );
+
+    testWidgets(
+      'calls login with demo credentials when Quick Demo Login is tapped',
+      (tester) async {
+        final controller = _FakeAuthController();
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              authControllerProvider.overrideWith(
+                () => controller,
+              ),
+            ],
+            child: const MaterialApp(
+              home: LoginPage(),
+            ),
+          ),
+        );
+
+        await tester.tap(
+          find.widgetWithText(OutlinedButton, 'Quick Demo Login'),
+        );
+
+        await tester.pump();
+
+        expect(controller.loginCalled, isTrue);
+        expect(controller.email, 'demo@shopsphere.com');
+        expect(controller.password, 'demo123456');
+      },
+    );
   });
 }
 

@@ -138,7 +138,7 @@ class _CartPageState extends ConsumerState<CartPage> {
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
-                                      '\$${item.price.toStringAsFixed(2)}',
+                                      '₹${item.price.toStringAsFixed(2)}',
                                       style: const TextStyle(
                                         color: AppColors.primary,
                                         fontWeight: FontWeight.w800,
@@ -272,7 +272,7 @@ class _CartPageState extends ConsumerState<CartPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text('Subtotal', style: TextStyle(color: AppColors.textSecondary)),
-                            Text('\$${cartState.subtotal.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.w600)),
+                            Text('₹${cartState.subtotal.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.w600)),
                           ],
                         ),
                         if (cartState.discountPercent > 0) ...[
@@ -281,7 +281,7 @@ class _CartPageState extends ConsumerState<CartPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text('Discount', style: TextStyle(color: Colors.green)),
-                              Text('-\$${cartState.discountAmount.toStringAsFixed(2)}', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w700)),
+                              Text('-₹${cartState.discountAmount.toStringAsFixed(2)}', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w700)),
                             ],
                           ),
                         ],
@@ -299,7 +299,7 @@ class _CartPageState extends ConsumerState<CartPage> {
                           children: [
                             const Text('Total', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                             Text(
-                              '\$${cartState.total.toStringAsFixed(2)}',
+                              '₹${cartState.total.toStringAsFixed(2)}',
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w800,

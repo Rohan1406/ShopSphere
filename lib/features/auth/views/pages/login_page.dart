@@ -35,6 +35,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         );
   }
 
+  Future<void> _submitDemo() async {
+    _emailController.text = 'demo@shopsphere.com';
+    _passwordController.text = 'demo123456';
+    await ref
+        .read(authControllerProvider.notifier)
+        .login(
+          email: 'demo@shopsphere.com',
+          password: 'demo123456',
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
@@ -118,6 +129,46 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : const Text('Login'),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: isLoading ? null : _submitDemo,
+                      icon: const Icon(Icons.bolt_rounded),
+                      label: const Text('Quick Demo Login'),
+                    ),
+                    const SizedBox(height: 24),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest
+                            .withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline_rounded,
+                            size: 20,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              'Demo Mode: Tap "Quick Demo Login" or enter any valid email to explore without backend setup.',
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

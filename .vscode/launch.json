@@ -1,0 +1,50 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ShopSphere (Development - Debug)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "debug",
+      "args": [
+        "--dart-define-from-file=config/development.json"
+      ]
+    },
+    {
+      "name": "ShopSphere (Staging - Debug)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "debug",
+      "args": [
+        "--dart-define-from-file=config/staging.json"
+      ]
+    },
+    {
+      "name": "ShopSphere (Production - Debug)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "debug",
+      "args": [
+        "--dart-define-from-file=config/production.json"
+      ]
+    },
+    {
+      "name": "ShopSphere (Run All Tests)",
+      "request": "launch",
+      "type": "dart",
+      "program": "test/"
+    },
+    {
+      "name": "ShopSphere (Run Tests with Coverage)",
+      "request": "launch",
+      "type": "dart",
+      "program": "test/",
+      "args": [
+        "--coverage"
+      ]
+    }
+  ]
+}

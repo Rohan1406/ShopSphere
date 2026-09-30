@@ -51,11 +51,15 @@ class ProductController extends Notifier<ProductState> {
   }
 
   /// Fetches products from remote API or falls back to offline dummy data.
-  Future<Result<List<Product>>> fetchProducts() async {
+  Future<Result<List<Product>>> fetchProducts({String? category}) async {
     state = const ProductLoading();
 
     try {
-      final response = await _dio.get(ApiEndpoints.products);
+      final endpoint = (category != null && category != 'all')
+          ? '${ApiEndpoints.products}?category=$category'
+          : ApiEndpoints.products;
+
+      final response = await _dio.get(endpoint);
       final rawList = response.data as List<dynamic>;
       final products = rawList
           .map((item) => ProductModelAdapter.fromJson(item as Map<String, dynamic>))
@@ -67,7 +71,9 @@ class ProductController extends Notifier<ProductState> {
       final mappedException = mapDioException(exception);
       // If offline or connection error, serve rich mock products gracefully
       if (mappedException is NetworkException || mappedException is TimeoutException) {
-        final mockProducts = DummyData.products;
+        final mockProducts = (category != null && category != 'all')
+            ? DummyData.findProductsByCategory(category)
+            : DummyData.products;
         state = ProductLoaded(mockProducts);
         return Success(mockProducts);
       }
@@ -86,7 +92,9 @@ class ProductController extends Notifier<ProductState> {
       return Error(failure);
     } catch (error) {
       // Offline fallback
-      final mockProducts = DummyData.products;
+      final mockProducts = (category != null && category != 'all')
+          ? DummyData.findProductsByCategory(category)
+          : DummyData.products;
       if (mockProducts.isNotEmpty) {
         state = ProductLoaded(mockProducts);
         return Success(mockProducts);
@@ -99,7 +107,85 @@ class ProductController extends Notifier<ProductState> {
 }
 
 // ==========================================
-// 2. PRODUCT DETAILS STATE & CONTROLLER
+// 2. CATEGORY & SEARCH FILTER PROVIDERS
+// ==========================================
+
+/// Provider for the currently selected category ID ('all' by default)
+final selectedCategoryProvider =
+    NotifierProvider<SelectedCategoryNotifier, String>(SelectedCategoryNotifier.new);
+
+class SelectedCategoryNotifier extends Notifier<String> {
+  @override
+  String build() => 'all';
+
+  void selectCategory(String categoryId) {
+    state = categoryId;
+  }
+}
+
+/// Provider for product search query filter
+final productSearchQueryProvider =
+    NotifierProvider<ProductSearchQueryNotifier, String>(
+      ProductSearchQueryNotifier.new,
+    );
+
+class ProductSearchQueryNotifier extends Notifier<String> {
+  @override
+  String build() => '';
+
+  void updateQuery(String query) {
+    state = query;
+  }
+
+  void clear() {
+    state = '';
+  }
+}
+
+/// Computed provider returning filtered products matching selectedCategory & searchQuery
+final filteredProductsProvider = Provider<List<Product>>((ref) {
+  final productState = ref.watch(productControllerProvider);
+  final selectedCategory = ref.watch(selectedCategoryProvider);
+  final searchQuery = ref.watch(productSearchQueryProvider).trim().toLowerCase();
+
+  final List<Product> baseProducts = switch (productState) {
+    ProductLoaded(:final products) => products,
+    _ => DummyData.products,
+  };
+
+  return baseProducts.where((product) {
+    final matchesCategory = selectedCategory == 'all' ||
+        product.category.toLowerCase() == selectedCategory.toLowerCase();
+
+    final matchesSearch = searchQuery.isEmpty ||
+        product.title.toLowerCase().contains(searchQuery) ||
+        product.description.toLowerCase().contains(searchQuery) ||
+        product.category.toLowerCase().contains(searchQuery);
+
+    return matchesCategory && matchesSearch;
+  }).toList();
+});
+
+/// Related products in the same category
+final relatedProductsProvider =
+    Provider.family<List<Product>, String>((ref, productId) {
+      final productState = ref.watch(productControllerProvider);
+      final List<Product> allProducts = switch (productState) {
+        ProductLoaded(:final products) => products,
+        _ => DummyData.products,
+      };
+
+      final current = allProducts.where((p) => p.id == productId).firstOrNull ??
+          DummyData.findProductById(productId);
+      if (current == null) return const [];
+
+      return allProducts
+          .where((p) => p.id != productId && p.category.toLowerCase() == current.category.toLowerCase())
+          .toList();
+    });
+
+// ==========================================
+// 3. PRODUCT DETAILS STATE & CONTROLLER
 // ==========================================
 
 sealed class ProductDetailsState {

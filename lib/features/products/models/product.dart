@@ -4,6 +4,7 @@ class Product {
   final String description;
   final double price;
   final String imageUrl;
+  final String category;
 
   const Product({
     required this.id,
@@ -11,6 +12,7 @@ class Product {
     required this.description,
     required this.price,
     required this.imageUrl,
+    this.category = 'general',
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class Product {
       description: json['description'] as String,
       price: (json['price'] as num).toDouble(),
       imageUrl: json['imageUrl'] as String,
+      category: (json['category'] as String?) ?? 'general',
     );
   }
 
@@ -30,6 +33,7 @@ class Product {
       'description': description,
       'price': price,
       'imageUrl': imageUrl,
+      'category': category,
     };
   }
 
@@ -39,6 +43,7 @@ class Product {
     String? description,
     double? price,
     String? imageUrl,
+    String? category,
   }) {
     return Product(
       id: id ?? this.id,
@@ -46,6 +51,7 @@ class Product {
       description: description ?? this.description,
       price: price ?? this.price,
       imageUrl: imageUrl ?? this.imageUrl,
+      category: category ?? this.category,
     );
   }
 
@@ -58,7 +64,8 @@ class Product {
           title == other.title &&
           description == other.description &&
           price == other.price &&
-          imageUrl == other.imageUrl;
+          imageUrl == other.imageUrl &&
+          category == other.category;
 
   @override
   int get hashCode =>
@@ -66,5 +73,6 @@ class Product {
       title.hashCode ^
       description.hashCode ^
       price.hashCode ^
-      imageUrl.hashCode;
+      imageUrl.hashCode ^
+      category.hashCode;
 }

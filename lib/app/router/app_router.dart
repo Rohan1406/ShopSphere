@@ -95,7 +95,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/products',
                 builder: (context, state) {
-                  return const ProductsPage();
+                  final category = state.uri.queryParameters['category'];
+                  return ProductsPage(initialCategory: category);
                 },
               ),
             ],

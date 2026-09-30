@@ -38,16 +38,27 @@ flutter test
 ```
 
 ### 4. Run the App
+
+#### Via CLI:
 ```bash
 # Development
-flutter run --dart-define=APP_ENV=development --dart-define=BASE_URL=https://api.example.com
+flutter run --dart-define-from-file=config/development.json
 
 # Staging
-flutter run --dart-define=APP_ENV=staging --dart-define=BASE_URL=https://staging-api.example.com
+flutter run --dart-define-from-file=config/staging.json
 
 # Production
-flutter run --dart-define=APP_ENV=production --dart-define=BASE_URL=https://api.shopsphere.com
+flutter run --dart-define-from-file=config/production.json
 ```
+
+#### Via VS Code / Antigravity IDE (Run & Debug):
+Press `F5` or open the **Run and Debug** panel (`Ctrl+Shift+D` / `Cmd+Shift+D`) and select:
+- **ShopSphere (Development - Debug)**
+- **ShopSphere (Staging - Debug)**
+- **ShopSphere (Production - Debug)**
+- **ShopSphere (Development/Staging/Production - Profile / Release)**
+- **ShopSphere (Run All Tests)**
+
 
 ---
 

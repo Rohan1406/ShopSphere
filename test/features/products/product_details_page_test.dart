@@ -51,13 +51,14 @@ void main() {
       );
 
       expect(find.text(product.title), findsOneWidget);
-      expect(find.text(product.description), findsOneWidget);
-      expect(find.text('\$${product.price.toStringAsFixed(2)}'), findsOneWidget);
+      expect(find.text(product.category.toUpperCase()), findsOneWidget);
+      expect(find.text('₹${product.price.toStringAsFixed(2)}'), findsOneWidget);
 
-      // Scroll to reveal the action button
+      // Scroll to reveal description and action button
       await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
       await tester.pump();
 
+      expect(find.text(product.description), findsOneWidget);
       expect(find.text('Add to Cart'), findsOneWidget);
     });
 

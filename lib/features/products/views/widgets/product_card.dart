@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shopsphere/app/theme/app_colors.dart';
 import 'package:shopsphere/features/products/models/product.dart';
 
 class ProductCard extends StatelessWidget {
@@ -12,6 +13,13 @@ class ProductCard extends StatelessWidget {
     return Card(
       clipBehavior: Clip.antiAlias,
       margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0.5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(
+          color: Colors.black.withValues(alpha: 0.06),
+        ),
+      ),
       child: InkWell(
         onTap: () {
           context.push('/products/${product.id}');
@@ -43,7 +51,7 @@ class _ProductImage extends StatelessWidget {
       width: 100,
       height: 100,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
         child: Image.network(
           imageUrl,
           fit: BoxFit.cover,
@@ -76,27 +84,52 @@ class _ProductInformation extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (product.category.isNotEmpty && product.category != 'general') ...[
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              product.category.toUpperCase(),
+              style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: AppColors.primary,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+        ],
         Text(
           product.title,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: Theme.of(
             context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600, fontSize: 15),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         Text(
           product.description,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: AppColors.textSecondary,
+            fontSize: 13,
+          ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         Text(
-          '\$${product.price.toStringAsFixed(2)}',
+          '₹${product.price.toStringAsFixed(2)}',
           style: Theme.of(
             context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppColors.primary,
+          ),
         ),
       ],
     );

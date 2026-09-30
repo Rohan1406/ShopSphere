@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shopsphere/app/theme/app_colors.dart';
 import 'package:shopsphere/core/mock/dummy_data.dart';
 import 'package:shopsphere/features/auth/controllers/auth_controller.dart';
+import 'package:shopsphere/features/products/views/widgets/category_filter_bar.dart';
 import 'package:shopsphere/features/products/views/widgets/product_card.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -20,15 +21,13 @@ class _HomePageState extends ConsumerState<HomePage> {
     await ref.read(authControllerProvider.notifier).logout();
   }
 
-  IconData _getCategoryIcon(String iconKey) {
-    return switch (iconKey) {
-      'devices_rounded' => Icons.devices_rounded,
-      'checkroom_rounded' => Icons.checkroom_rounded,
-      'roller_skating_rounded' => Icons.directions_run_rounded,
-      'watch_rounded' => Icons.watch_rounded,
-      'local_cafe_rounded' => Icons.local_cafe_rounded,
-      _ => Icons.grid_view_rounded,
-    };
+  void _navigateToCatalog([String? category]) {
+    final cat = category ?? _selectedCategory;
+    if (cat == 'all') {
+      context.push('/products');
+    } else {
+      context.push('/products?category=$cat');
+    }
   }
 
   @override
@@ -36,7 +35,19 @@ class _HomePageState extends ConsumerState<HomePage> {
     final authState = ref.watch(authControllerProvider);
     final isLoggingOut = authState is AuthLoading;
     final theme = Theme.of(context);
-    final featuredProducts = DummyData.products.take(3).toList();
+
+    // Filter products dynamically based on selected category
+    final displayedProducts = _selectedCategory == 'all'
+        ? DummyData.products.take(4).toList()
+        : DummyData.findProductsByCategory(_selectedCategory);
+
+    // Compute item counts for the category chips
+    final Map<String, int> counts = {
+      'all': DummyData.products.length,
+      for (final cat in DummyData.categoryList)
+        if (cat.id != 'all')
+          cat.id: DummyData.findProductsByCategory(cat.id).length,
+    };
 
     return Scaffold(
       appBar: AppBar(
@@ -69,7 +80,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                     const SizedBox(height: 10),
                     InkWell(
-                      onTap: () => context.push('/products'),
+                      onTap: () => _navigateToCatalog(),
                       borderRadius: BorderRadius.circular(12),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -79,14 +90,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                         decoration: BoxDecoration(
                           color: AppColors.surface,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.black12),
+                          border: Border.all(
+                            color: Colors.black.withValues(alpha: 0.1),
+                          ),
                         ),
                         child: const Row(
                           children: [
                             Icon(Icons.search, color: AppColors.textSecondary),
                             SizedBox(width: 8),
                             Text(
-                              'Search products...',
+                              'Search products by name or category...',
                               style: TextStyle(color: AppColors.textSecondary),
                             ),
                           ],
@@ -197,68 +210,62 @@ class _HomePageState extends ConsumerState<HomePage> {
 
               const SizedBox(height: 20),
 
-              // Categories
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  'Categories',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 40,
-                child: ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: DummyData.categories.length,
-                  separatorBuilder: (context, index) => const SizedBox(width: 8),
-                  itemBuilder: (context, index) {
-                    final cat = DummyData.categories[index];
-                    final isSelected = _selectedCategory == cat['id'];
-
-                    return ChoiceChip(
-                      selected: isSelected,
-                      avatar: Icon(
-                        _getCategoryIcon(cat['icon'] as String),
-                        size: 16,
-                        color: isSelected ? Colors.white : AppColors.primary,
-                      ),
-                      label: Text(cat['name'] as String),
-                      labelStyle: TextStyle(
-                        color: isSelected ? Colors.white : AppColors.textPrimary,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                      ),
-                      selectedColor: AppColors.primary,
-                      onSelected: (_) {
-                        setState(() {
-                          _selectedCategory = cat['id'] as String;
-                        });
-                      },
-                    );
-                  },
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // Featured Products Header
+              // Categories Header
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Featured Products',
+                      'Browse by Category',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (_selectedCategory != 'all')
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _selectedCategory = 'all';
+                          });
+                        },
+                        child: const Text('Reset'),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              // Category Filter Bar
+              CategoryFilterBar(
+                selectedCategoryId: _selectedCategory,
+                categories: DummyData.categoryList,
+                itemCounts: counts,
+                onCategorySelected: (catId) {
+                  setState(() {
+                    _selectedCategory = catId;
+                  });
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              // Section Header
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _selectedCategory == 'all'
+                          ? 'Featured Products'
+                          : '${_selectedCategory[0].toUpperCase()}${_selectedCategory.substring(1)} Products (${displayedProducts.length})',
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     TextButton(
-                      onPressed: () => context.push('/products'),
+                      onPressed: () => _navigateToCatalog(),
                       child: const Text('View All'),
                     ),
                   ],
@@ -266,14 +273,24 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
               const SizedBox(height: 4),
 
-              // Featured items list
+              // Dynamic items list
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: featuredProducts
-                      .map((product) => ProductCard(product: product))
-                      .toList(),
-                ),
+                child: displayedProducts.isEmpty
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Text(
+                            'No products available in this category.',
+                            style: TextStyle(color: AppColors.textSecondary),
+                          ),
+                        ),
+                      )
+                    : Column(
+                        children: displayedProducts
+                            .map((product) => ProductCard(product: product))
+                            .toList(),
+                      ),
               ),
 
               const SizedBox(height: 16),
@@ -284,9 +301,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                 child: SizedBox(
                   width: double.infinity,
                   height: 48,
-                  child: FilledButton(
-                    onPressed: () => context.push('/products'),
-                    child: const Text('View Products'),
+                  child: FilledButton.icon(
+                    onPressed: () => _navigateToCatalog(),
+                    icon: const Icon(Icons.grid_view_rounded, size: 18),
+                    label: Text(
+                      _selectedCategory == 'all'
+                          ? 'View Products'
+                          : 'Explore All ${_selectedCategory[0].toUpperCase()}${_selectedCategory.substring(1)} (${counts[_selectedCategory] ?? 0})',
+                    ),
                   ),
                 ),
               ),
