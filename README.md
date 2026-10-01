@@ -16,7 +16,7 @@ For the complete in-depth documentation covering architecture, features, API spe
 - **Product Catalog & Details**: Browse products, view item details with collapsible sliver app bar, rating badge, price highlights, and dynamic quantity selector.
 - **Cart & Promo Engine**: Dedicated `CartController` supporting real-time calculations, quantity modifications, item removals, and promo code discounts.
 - **Material 3 Theming**: Consistent color system and component styling.
-- **Automated Test Suite**: 69 unit and widget tests covering all critical paths.
+- **Automated Test Suite**: 83 unit and widget tests covering all critical paths.
 
 ---
 
