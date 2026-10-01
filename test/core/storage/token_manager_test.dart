@@ -86,5 +86,19 @@ void main() {
         isNull,
       );
     });
+    test('returns false when access token is malformed without throwing FormatException', () async {
+      final storage = FakeTokenStorage();
+      final manager = TokenManager(storage);
+
+      await manager.saveTokens(
+        accessToken: 'not_a_valid_jwt_format_string',
+        refreshToken: 'refresh-token',
+      );
+
+      expect(
+        await manager.hasValidAccessToken(),
+        isFalse,
+      );
+    });
   });
 }

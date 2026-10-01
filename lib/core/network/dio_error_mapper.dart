@@ -32,6 +32,7 @@ AppException mapDioException(DioException exception) {
 AppException _mapStatusCode(int? statusCode) {
   switch (statusCode) {
     case 400:
+    case 422:
       return const BadRequestException(statusCode: 400);
 
     case 401:
@@ -45,6 +46,11 @@ AppException _mapStatusCode(int? statusCode) {
 
     case 408:
       return const TimeoutException();
+
+    case 429:
+      return const NetworkException(
+        message: 'Too many requests. Please slow down and try again.',
+      );
 
     case 500:
     case 502:

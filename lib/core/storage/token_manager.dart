@@ -21,7 +21,12 @@ class TokenManager {
       return false;
     }
 
-    return !JwtDecoder.isExpired(accessToken);
+    try {
+      return !JwtDecoder.isExpired(accessToken);
+    } catch (_) {
+      // Return false safely if the token is not a valid JWT format
+      return false;
+    }
   }
 
   Future<void> saveTokens({

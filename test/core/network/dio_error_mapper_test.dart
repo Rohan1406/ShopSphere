@@ -141,6 +141,38 @@ void main() {
       expect(result.statusCode, 502);
     });
 
+    test('maps 422 to BadRequestException', () {
+      final exception = DioException(
+        requestOptions: RequestOptions(path: '/test'),
+        type: DioExceptionType.badResponse,
+        response: Response(
+          requestOptions: RequestOptions(path: '/test'),
+          statusCode: 422,
+        ),
+      );
+
+      final result = mapDioException(exception);
+
+      expect(result, isA<BadRequestException>());
+      expect(result.statusCode, 400);
+    });
+
+    test('maps 429 to rate limit NetworkException', () {
+      final exception = DioException(
+        requestOptions: RequestOptions(path: '/test'),
+        type: DioExceptionType.badResponse,
+        response: Response(
+          requestOptions: RequestOptions(path: '/test'),
+          statusCode: 429,
+        ),
+      );
+
+      final result = mapDioException(exception);
+
+      expect(result, isA<NetworkException>());
+      expect(result.message, contains('Too many requests'));
+    });
+
     test('maps unknown errors to NetworkException', () {
       final exception = DioException(
         requestOptions: RequestOptions(path: '/test'),
