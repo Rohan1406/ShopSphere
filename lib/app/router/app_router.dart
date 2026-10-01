@@ -41,11 +41,23 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       }
 
       if (authState is AuthUnauthenticated || authState is AuthError) {
-        return isLogin ? null : '/login';
+        if (isLogin) return null;
+        final target = state.uri.toString();
+        if (target.isNotEmpty && target != '/' && target != '/startup' && target != '/login') {
+          return '/login?from=${Uri.encodeComponent(target)}';
+        }
+        return '/login';
       }
 
       if (isAuthenticated) {
-        if (isLogin || isStartup) {
+        if (isLogin) {
+          final from = state.uri.queryParameters['from'];
+          if (from != null && from.isNotEmpty && from.startsWith('/')) {
+            return from;
+          }
+          return '/home';
+        }
+        if (isStartup) {
           return '/home';
         }
 
@@ -59,16 +71,39 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: '/startup',
-        builder: (context, state) {
-          return const AuthStartupScreen();
-        },
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const AuthStartupScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 350),
+        ),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: '/login',
-        builder: (context, state) {
-          return const LoginPage();
-        },
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const LoginPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            final curvedAnimation = CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic,
+            );
+            return FadeTransition(
+              opacity: curvedAnimation,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0.0, 0.04),
+                  end: Offset.zero,
+                ).animate(curvedAnimation),
+                child: child,
+              ),
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 350),
+        ),
       ),
 
       // Main tabbed shell with persistent bottom navigation bar
@@ -132,10 +167,29 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: '/products/:id',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final productId = state.pathParameters['id']!;
-
-          return ProductDetailsPage(productId: productId);
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: ProductDetailsPage(productId: productId),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              final curvedAnimation = CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              );
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0.0, 0.08),
+                  end: Offset.zero,
+                ).animate(curvedAnimation),
+                child: FadeTransition(
+                  opacity: curvedAnimation,
+                  child: child,
+                ),
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 300),
+          );
         },
       ),
     ],

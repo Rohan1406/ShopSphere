@@ -126,4 +126,20 @@ void main() {
       expect(state, isA<ProductDetailsLoaded>());
     });
   });
+
+  group('FavoritesNotifier', () {
+    test('toggles favorites correctly and persists in state', () {
+      final notifier = container.read(favoritesProvider.notifier);
+
+      expect(notifier.isFavorite('1'), isTrue);
+
+      notifier.toggleFavorite('1');
+      expect(notifier.isFavorite('1'), isFalse);
+      expect(container.read(favoritesProvider).contains('1'), isFalse);
+
+      notifier.toggleFavorite('1');
+      expect(notifier.isFavorite('1'), isTrue);
+      expect(container.read(favoritesProvider).contains('1'), isTrue);
+    });
+  });
 }

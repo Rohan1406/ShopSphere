@@ -274,7 +274,34 @@ class ProductDetailsController extends Notifier<ProductDetailsState> {
   }
 }
 
+// ==========================================
+// 4. FAVORITES / WISHLIST STATE & CONTROLLER
+// ==========================================
+
+final favoritesProvider =
+    NotifierProvider<FavoritesNotifier, Set<String>>(FavoritesNotifier.new);
+
+class FavoritesNotifier extends Notifier<Set<String>> {
+  @override
+  Set<String> build() {
+    // Initial default demo favorite product IDs
+    return {'1', '3'};
+  }
+
+  void toggleFavorite(String productId) {
+    if (state.contains(productId)) {
+      final updated = Set<String>.from(state)..remove(productId);
+      state = updated;
+    } else {
+      state = {...state, productId};
+    }
+  }
+
+  bool isFavorite(String productId) => state.contains(productId);
+}
+
 /// Helper adapter to parse Product
 abstract final class ProductModelAdapter {
   static Product fromJson(Map<String, dynamic> json) => Product.fromJson(json);
 }
+

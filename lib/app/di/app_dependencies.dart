@@ -47,7 +47,9 @@ final appDioProvider = Provider((ref) {
     },
   );
 
-  dioClient.addInterceptor(interceptor);
+  if (!dioClient.dio.interceptors.any((i) => i is AuthInterceptor)) {
+    dioClient.addInterceptor(interceptor);
+  }
 
   return dioClient.dio;
 });
