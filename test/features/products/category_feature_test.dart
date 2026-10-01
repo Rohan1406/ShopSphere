@@ -69,23 +69,32 @@ void main() {
     test('filteredProductsProvider filters by selected category', () {
       final container = ProviderContainer(
         overrides: [
-          productControllerProvider.overrideWith(() => _FakeLoadedProductController()),
+          productControllerProvider.overrideWith(
+            () => _FakeLoadedProductController(),
+          ),
         ],
       );
       addTearDown(container.dispose);
 
       // Default 'all'
       expect(container.read(selectedCategoryProvider), 'all');
-      expect(container.read(filteredProductsProvider).length, DummyData.products.length);
+      expect(
+        container.read(filteredProductsProvider).length,
+        DummyData.products.length,
+      );
 
       // Select electronics
-      container.read(selectedCategoryProvider.notifier).selectCategory('electronics');
+      container
+          .read(selectedCategoryProvider.notifier)
+          .selectCategory('electronics');
       final electronics = container.read(filteredProductsProvider);
       expect(electronics.every((p) => p.category == 'electronics'), isTrue);
       expect(electronics.isNotEmpty, isTrue);
 
       // Select fashion
-      container.read(selectedCategoryProvider.notifier).selectCategory('fashion');
+      container
+          .read(selectedCategoryProvider.notifier)
+          .selectCategory('fashion');
       final fashion = container.read(filteredProductsProvider);
       expect(fashion.every((p) => p.category == 'fashion'), isTrue);
     });
@@ -93,7 +102,9 @@ void main() {
     test('filteredProductsProvider filters by search query', () {
       final container = ProviderContainer(
         overrides: [
-          productControllerProvider.overrideWith(() => _FakeLoadedProductController()),
+          productControllerProvider.overrideWith(
+            () => _FakeLoadedProductController(),
+          ),
         ],
       );
       addTearDown(container.dispose);

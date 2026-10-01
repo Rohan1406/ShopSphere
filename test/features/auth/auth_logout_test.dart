@@ -10,29 +10,35 @@ class MockTokenStorage extends Mock implements TokenStorage {}
 
 void main() {
   group('AuthController logout', () {
-    test('changes state to unauthenticated and clears storage on logout', () async {
-      final mockStorage = MockTokenStorage();
-      final tokenManager = TokenManager(mockStorage);
+    test(
+      'changes state to unauthenticated and clears storage on logout',
+      () async {
+        final mockStorage = MockTokenStorage();
+        final tokenManager = TokenManager(mockStorage);
 
-      when(() => mockStorage.clear()).thenAnswer((_) async {});
+        when(() => mockStorage.clear()).thenAnswer((_) async {});
 
-      final container = ProviderContainer(
-        overrides: [
-          tokenStorageProvider.overrideWithValue(mockStorage),
-          tokenManagerProvider.overrideWithValue(tokenManager),
-        ],
-      );
+        final container = ProviderContainer(
+          overrides: [
+            tokenStorageProvider.overrideWithValue(mockStorage),
+            tokenManagerProvider.overrideWithValue(tokenManager),
+          ],
+        );
 
-      addTearDown(container.dispose);
+        addTearDown(container.dispose);
 
-      final controller = container.read(authControllerProvider.notifier);
+        final controller = container.read(authControllerProvider.notifier);
 
-      expect(container.read(authControllerProvider), isA<AuthInitial>());
+        expect(container.read(authControllerProvider), isA<AuthInitial>());
 
-      await controller.logout();
+        await controller.logout();
 
-      expect(container.read(authControllerProvider), isA<AuthUnauthenticated>());
-      verify(() => mockStorage.clear()).called(1);
-    });
+        expect(
+          container.read(authControllerProvider),
+          isA<AuthUnauthenticated>(),
+        );
+        verify(() => mockStorage.clear()).called(1);
+      },
+    );
   });
 }

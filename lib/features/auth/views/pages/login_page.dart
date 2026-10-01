@@ -42,10 +42,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     _passwordController.text = 'demo123456';
     await ref
         .read(authControllerProvider.notifier)
-        .login(
-          email: 'demo@shopsphere.com',
-          password: 'demo123456',
-        );
+        .login(email: 'demo@shopsphere.com', password: 'demo123456');
   }
 
   @override
@@ -55,23 +52,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     ref.listen<AuthState>(authControllerProvider, (previous, next) {
       if (next case AuthError(:final message)) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: AppColors.error,
-          ),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message), backgroundColor: AppColors.error),
         );
       }
     });
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Login'),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Login'), elevation: 0),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -113,7 +102,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     Text(
                       'Welcome back',
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(
                             fontWeight: FontWeight.w800,
                             letterSpacing: -0.5,
                           ),
@@ -123,9 +113,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       'Sign in to continue to ShopSphere.',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textSecondary,
-                            fontSize: 14,
-                          ),
+                        color: AppColors.textSecondary,
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 32),
 
@@ -232,8 +222,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                         strokeWidth: 2.5,
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
-                                          Colors.white,
-                                        ),
+                                              Colors.white,
+                                            ),
                                       ),
                                     )
                                   : const Text(
@@ -299,9 +289,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           Expanded(
                             child: Text(
                               'Demo Mode: Tap "Quick Demo Login" or enter any valid email to explore without backend setup.',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
+                              style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
                                     color: AppColors.primaryDark,
                                     fontWeight: FontWeight.w500,
@@ -322,4 +310,3 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 }
-

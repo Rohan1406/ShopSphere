@@ -149,11 +149,26 @@ class ProfilePage extends ConsumerWidget {
               // Activity stats cards
               Row(
                 children: [
-                  _buildStatItem('Orders', '12', Icons.receipt_long_rounded, AppColors.primary),
+                  _buildStatItem(
+                    'Orders',
+                    '12',
+                    Icons.receipt_long_rounded,
+                    AppColors.primary,
+                  ),
                   const SizedBox(width: 10),
-                  _buildStatItem('Wishlist', '$favoritesCount', Icons.favorite_rounded, AppColors.secondary),
+                  _buildStatItem(
+                    'Wishlist',
+                    '$favoritesCount',
+                    Icons.favorite_rounded,
+                    AppColors.secondary,
+                  ),
                   const SizedBox(width: 10),
-                  _buildStatItem('Coupons', '3', Icons.local_offer_rounded, AppColors.amber),
+                  _buildStatItem(
+                    'Coupons',
+                    '3',
+                    Icons.local_offer_rounded,
+                    AppColors.amber,
+                  ),
                 ],
               ),
 
@@ -306,10 +321,7 @@ class ProfilePage extends ConsumerWidget {
                       : const Icon(Icons.logout_rounded, size: 20),
                   label: const Text(
                     'Logout',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
                   ),
                 ),
               ),
@@ -321,7 +333,12 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatItem(String label, String value, IconData icon, Color color) {
+  Widget _buildStatItem(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
@@ -443,4 +460,3 @@ class _MenuItem {
     required this.onTap,
   });
 }
-

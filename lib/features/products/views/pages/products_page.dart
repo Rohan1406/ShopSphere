@@ -25,7 +25,8 @@ class _ProductsPageState extends ConsumerState<ProductsPage> {
     _searchController = TextEditingController();
 
     Future.microtask(() {
-      if (widget.initialCategory != null && widget.initialCategory!.isNotEmpty) {
+      if (widget.initialCategory != null &&
+          widget.initialCategory!.isNotEmpty) {
         ref
             .read(selectedCategoryProvider.notifier)
             .selectCategory(widget.initialCategory!);
@@ -72,7 +73,9 @@ class _ProductsPageState extends ConsumerState<ProductsPage> {
               onPressed: () {
                 _searchController.clear();
                 ref.read(productSearchQueryProvider.notifier).clear();
-                ref.read(selectedCategoryProvider.notifier).selectCategory('all');
+                ref
+                    .read(selectedCategoryProvider.notifier)
+                    .selectCategory('all');
               },
               icon: const Icon(Icons.filter_alt_off_rounded, size: 16),
               label: const Text('Reset'),
@@ -195,129 +198,133 @@ class _ProductsPageState extends ConsumerState<ProductsPage> {
             child: switch (state) {
               ProductInitial() => const SizedBox.shrink(),
               ProductLoading() => const Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ProductLoaded() => filteredProducts.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(32),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: AppColors.primarySurface,
-                                shape: BoxShape.circle,
+                child: CircularProgressIndicator(),
+              ),
+              ProductLoaded() =>
+                filteredProducts.isEmpty
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(32),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primarySurface,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.category_outlined,
+                                  size: 48,
+                                  color: AppColors.primary,
+                                ),
                               ),
-                              child: const Icon(
-                                Icons.category_outlined,
-                                size: 48,
-                                color: AppColors.primary,
+                              const SizedBox(height: 18),
+                              const Text(
+                                'No products found',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.textPrimary,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 18),
-                            const Text(
-                              'No products found',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.textPrimary,
+                              const SizedBox(height: 8),
+                              Text(
+                                selectedCategory != 'all'
+                                    ? 'No items available in "$selectedCategory".'
+                                    : 'No items matching your search criteria.',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 14,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              selectedCategory != 'all'
-                                  ? 'No items available in "$selectedCategory".'
-                                  : 'No items matching your search criteria.',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: AppColors.textSecondary,
-                                fontSize: 14,
+                              const SizedBox(height: 20),
+                              FilledButton.tonalIcon(
+                                onPressed: () {
+                                  _searchController.clear();
+                                  ref
+                                      .read(productSearchQueryProvider.notifier)
+                                      .clear();
+                                  ref
+                                      .read(selectedCategoryProvider.notifier)
+                                      .selectCategory('all');
+                                },
+                                icon: const Icon(
+                                  Icons.refresh_rounded,
+                                  size: 18,
+                                ),
+                                label: const Text('View All Categories'),
                               ),
-                            ),
-                            const SizedBox(height: 20),
-                            FilledButton.tonalIcon(
-                              onPressed: () {
-                                _searchController.clear();
-                                ref
-                                    .read(productSearchQueryProvider.notifier)
-                                    .clear();
-                                ref
-                                    .read(selectedCategoryProvider.notifier)
-                                    .selectCategory('all');
-                              },
-                              icon: const Icon(Icons.refresh_rounded, size: 18),
-                              label: const Text('View All Categories'),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: () async {
-                        await ref
-                            .read(productControllerProvider.notifier)
-                            .fetchProducts();
-                      },
-                      child: GridView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 0.65,
-                        ),
-                        itemCount: filteredProducts.length,
-                        itemBuilder: (context, index) {
-                          return ProductGridCard(
-                            product: filteredProducts[index],
-                          );
+                      )
+                    : RefreshIndicator(
+                        onRefresh: () async {
+                          await ref
+                              .read(productControllerProvider.notifier)
+                              .fetchProducts();
                         },
-                      ),
-                    ),
-              ProductError(:final failure) => Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: AppColors.errorSurface,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.error_outline_rounded,
-                            size: 40,
-                            color: AppColors.error,
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                        Text(
-                          failure.message,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 18),
-                        FilledButton.icon(
-                          onPressed: () {
-                            ref
-                                .read(productControllerProvider.notifier)
-                                .fetchProducts();
+                        child: GridView.builder(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                childAspectRatio: 0.65,
+                              ),
+                          itemCount: filteredProducts.length,
+                          itemBuilder: (context, index) {
+                            return ProductGridCard(
+                              product: filteredProducts[index],
+                            );
                           },
-                          icon: const Icon(Icons.refresh_rounded, size: 18),
-                          label: const Text('Retry'),
                         ),
-                      ],
-                    ),
+                      ),
+              ProductError(:final failure) => Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.errorSurface,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.error_outline_rounded,
+                          size: 40,
+                          color: AppColors.error,
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        failure.message,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      FilledButton.icon(
+                        onPressed: () {
+                          ref
+                              .read(productControllerProvider.notifier)
+                              .fetchProducts();
+                        },
+                        icon: const Icon(Icons.refresh_rounded, size: 18),
+                        label: const Text('Retry'),
+                      ),
+                    ],
                   ),
                 ),
+              ),
             },
           ),
         ],
@@ -325,4 +332,3 @@ class _ProductsPageState extends ConsumerState<ProductsPage> {
     );
   }
 }
-

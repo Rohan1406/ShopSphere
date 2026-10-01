@@ -47,7 +47,9 @@ class _ProductDetailsPageState extends ConsumerState<ProductDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(productDetailsControllerProvider(widget.productId));
-    final relatedProducts = ref.watch(relatedProductsProvider(widget.productId));
+    final relatedProducts = ref.watch(
+      relatedProductsProvider(widget.productId),
+    );
     final isFavorite = ref.watch(favoritesProvider).contains(widget.productId);
 
     return Scaffold(
@@ -55,75 +57,79 @@ class _ProductDetailsPageState extends ConsumerState<ProductDetailsPage> {
       body: switch (state) {
         ProductDetailsInitial() => const SizedBox.shrink(),
         ProductDetailsLoading() => const Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: CircularProgressIndicator(),
+        ),
         ProductDetailsLoaded(:final product) => _ProductDetailsContent(
-            product: product,
-            quantity: _quantity,
-            isFavorite: isFavorite,
-            relatedProducts: relatedProducts,
-            onFavoriteToggle: () {
-              ref.read(favoritesProvider.notifier).toggleFavorite(widget.productId);
-            },
-            onDecrease: _decreasedQuantity,
-            onIncrease: _increaseQuantity,
-            onAddToCart: () {
-              ref.read(cartControllerProvider.notifier).addProduct(product, quantity: _quantity);
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Added $_quantity x "${product.title}" to cart!'),
-                  action: SnackBarAction(
-                    label: 'Go to Cart',
-                    textColor: AppColors.amber,
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                      context.go('/cart');
-                    },
-                  ),
-                  duration: const Duration(seconds: 3),
+          product: product,
+          quantity: _quantity,
+          isFavorite: isFavorite,
+          relatedProducts: relatedProducts,
+          onFavoriteToggle: () {
+            ref
+                .read(favoritesProvider.notifier)
+                .toggleFavorite(widget.productId);
+          },
+          onDecrease: _decreasedQuantity,
+          onIncrease: _increaseQuantity,
+          onAddToCart: () {
+            ref
+                .read(cartControllerProvider.notifier)
+                .addProduct(product, quantity: _quantity);
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Added $_quantity x "${product.title}" to cart!'),
+                action: SnackBarAction(
+                  label: 'Go to Cart',
+                  textColor: AppColors.amber,
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    context.go('/cart');
+                  },
                 ),
-              );
-            },
-          ),
-        ProductDetailsError(:final failure) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.errorSurface,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.error_outline_rounded,
-                      size: 40,
-                      color: AppColors.error,
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  Text(failure.message, textAlign: TextAlign.center),
-                  const SizedBox(height: 16),
-                  FilledButton.icon(
-                    onPressed: () {
-                      ref
-                          .read(
-                            productDetailsControllerProvider(
-                              widget.productId,
-                            ).notifier,
-                          )
-                          .fetchProduct();
-                    },
-                    icon: const Icon(Icons.refresh_rounded, size: 18),
-                    label: const Text('Retry'),
-                  ),
-                ],
+                duration: const Duration(seconds: 3),
               ),
+            );
+          },
+        ),
+        ProductDetailsError(:final failure) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.errorSurface,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.error_outline_rounded,
+                    size: 40,
+                    color: AppColors.error,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Text(failure.message, textAlign: TextAlign.center),
+                const SizedBox(height: 16),
+                FilledButton.icon(
+                  onPressed: () {
+                    ref
+                        .read(
+                          productDetailsControllerProvider(
+                            widget.productId,
+                          ).notifier,
+                        )
+                        .fetchProduct();
+                  },
+                  icon: const Icon(Icons.refresh_rounded, size: 18),
+                  label: const Text('Retry'),
+                ),
+              ],
             ),
           ),
+        ),
       },
     );
   }
@@ -179,7 +185,10 @@ class _ProductDetailsContent extends StatelessWidget {
               backgroundColor: AppColors.surface.withValues(alpha: 0.9),
               child: IconButton(
                 onPressed: () => context.pop(),
-                icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+                icon: const Icon(
+                  Icons.arrow_back_rounded,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ),
           ),
@@ -192,8 +201,12 @@ class _ProductDetailsContent extends StatelessWidget {
                   onPressed: onFavoriteToggle,
                   tooltip: 'Favorite',
                   icon: Icon(
-                    isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                    color: isFavorite ? AppColors.secondary : AppColors.textPrimary,
+                    isFavorite
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
+                    color: isFavorite
+                        ? AppColors.secondary
+                        : AppColors.textPrimary,
                   ),
                 ),
               ),
@@ -222,9 +235,7 @@ class _ProductDetailsContent extends StatelessWidget {
                       if (loadingProgress == null) {
                         return child;
                       }
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     },
                   ),
                 ),
@@ -240,7 +251,8 @@ class _ProductDetailsContent extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (product.category.isNotEmpty && product.category != 'general') ...[
+                  if (product.category.isNotEmpty &&
+                      product.category != 'general') ...[
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,
@@ -288,7 +300,11 @@ class _ProductDetailsContent extends StatelessWidget {
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.star_rounded, size: 16, color: AppColors.amber),
+                        Icon(
+                          Icons.star_rounded,
+                          size: 16,
+                          color: AppColors.amber,
+                        ),
                         SizedBox(width: 4),
                         Text(
                           '4.8 (124 reviews)',
@@ -342,7 +358,10 @@ class _ProductDetailsContent extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.successSurface,
                       borderRadius: BorderRadius.circular(6),
@@ -362,7 +381,10 @@ class _ProductDetailsContent extends StatelessWidget {
 
               // Trust & Highlights Grid
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(14),
@@ -371,9 +393,15 @@ class _ProductDetailsContent extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildFeatureItem(Icons.local_shipping_outlined, 'Free Delivery'),
+                    _buildFeatureItem(
+                      Icons.local_shipping_outlined,
+                      'Free Delivery',
+                    ),
                     _buildFeatureDivider(),
-                    _buildFeatureItem(Icons.verified_user_outlined, '1-Yr Warranty'),
+                    _buildFeatureItem(
+                      Icons.verified_user_outlined,
+                      '1-Yr Warranty',
+                    ),
                     _buildFeatureDivider(),
                     _buildFeatureItem(Icons.autorenew_rounded, '7-Day Return'),
                   ],
@@ -396,7 +424,11 @@ class _ProductDetailsContent extends StatelessWidget {
                   children: [
                     const Row(
                       children: [
-                        Icon(Icons.info_outline_rounded, size: 18, color: AppColors.primary),
+                        Icon(
+                          Icons.info_outline_rounded,
+                          size: 18,
+                          color: AppColors.primary,
+                        ),
                         SizedBox(width: 8),
                         Text(
                           'Description',
@@ -475,7 +507,9 @@ class _ProductDetailsContent extends StatelessWidget {
                       ),
                     ),
                     TextButton(
-                      onPressed: () => context.push('/products?category=${product.category}'),
+                      onPressed: () => context.push(
+                        '/products?category=${product.category}',
+                      ),
                       child: const Text('View All'),
                     ),
                   ],
@@ -514,11 +548,7 @@ class _ProductDetailsContent extends StatelessWidget {
   }
 
   Widget _buildFeatureDivider() {
-    return Container(
-      height: 24,
-      width: 1,
-      color: AppColors.border,
-    );
+    return Container(height: 24, width: 1, color: AppColors.border);
   }
 }
 
@@ -570,4 +600,3 @@ class _QuantitySelector extends StatelessWidget {
     );
   }
 }
-

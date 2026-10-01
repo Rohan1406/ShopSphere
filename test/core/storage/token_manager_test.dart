@@ -39,10 +39,7 @@ void main() {
       final storage = FakeTokenStorage();
       final manager = TokenManager(storage);
 
-      expect(
-        await manager.hasValidAccessToken(),
-        isFalse,
-      );
+      expect(await manager.hasValidAccessToken(), isFalse);
     });
 
     test('saves tokens through token storage', () async {
@@ -54,15 +51,9 @@ void main() {
         refreshToken: 'refresh-token',
       );
 
-      expect(
-        await manager.getAccessToken(),
-        'access-token',
-      );
+      expect(await manager.getAccessToken(), 'access-token');
 
-      expect(
-        await manager.getRefreshToken(),
-        'refresh-token',
-      );
+      expect(await manager.getRefreshToken(), 'refresh-token');
     });
 
     test('clear removes stored tokens', () async {
@@ -76,29 +67,23 @@ void main() {
 
       await manager.clear();
 
-      expect(
-        await manager.getAccessToken(),
-        isNull,
-      );
+      expect(await manager.getAccessToken(), isNull);
 
-      expect(
-        await manager.getRefreshToken(),
-        isNull,
-      );
+      expect(await manager.getRefreshToken(), isNull);
     });
-    test('returns false when access token is malformed without throwing FormatException', () async {
-      final storage = FakeTokenStorage();
-      final manager = TokenManager(storage);
+    test(
+      'returns false when access token is malformed without throwing FormatException',
+      () async {
+        final storage = FakeTokenStorage();
+        final manager = TokenManager(storage);
 
-      await manager.saveTokens(
-        accessToken: 'not_a_valid_jwt_format_string',
-        refreshToken: 'refresh-token',
-      );
+        await manager.saveTokens(
+          accessToken: 'not_a_valid_jwt_format_string',
+          refreshToken: 'refresh-token',
+        );
 
-      expect(
-        await manager.hasValidAccessToken(),
-        isFalse,
-      );
-    });
+        expect(await manager.hasValidAccessToken(), isFalse);
+      },
+    );
   });
 }

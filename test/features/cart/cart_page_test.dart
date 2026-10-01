@@ -59,11 +59,7 @@ void main() {
   group('CartPage Widget', () {
     testWidgets('displays cart items, total and promo input', (tester) async {
       await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(
-            home: CartPage(),
-          ),
-        ),
+        const ProviderScope(child: MaterialApp(home: CartPage())),
       );
 
       expect(find.text('My Cart'), findsOneWidget);
@@ -74,11 +70,7 @@ void main() {
 
     testWidgets('applies promo code successfully', (tester) async {
       await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(
-            home: CartPage(),
-          ),
-        ),
+        const ProviderScope(child: MaterialApp(home: CartPage())),
       );
 
       await tester.enterText(find.byType(TextField), 'TECH40');

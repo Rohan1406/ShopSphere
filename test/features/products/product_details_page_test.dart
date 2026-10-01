@@ -29,38 +29,40 @@ class _FakeProductDetailsController extends ProductDetailsController {
 
 void main() {
   group('ProductDetailsPage', () {
-    testWidgets('displays loaded product details with image, title, and price', (
-      tester,
-    ) async {
-      final product = DummyData.products.first;
+    testWidgets(
+      'displays loaded product details with image, title, and price',
+      (tester) async {
+        final product = DummyData.products.first;
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            productDetailsControllerProvider('1').overrideWith(
-              () => _FakeProductDetailsController(
-                '1',
-                ProductDetailsLoaded(product),
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              productDetailsControllerProvider('1').overrideWith(
+                () => _FakeProductDetailsController(
+                  '1',
+                  ProductDetailsLoaded(product),
+                ),
               ),
-            ),
-          ],
-          child: const MaterialApp(
-            home: ProductDetailsPage(productId: '1'),
+            ],
+            child: const MaterialApp(home: ProductDetailsPage(productId: '1')),
           ),
-        ),
-      );
+        );
 
-      expect(find.text(product.title), findsOneWidget);
-      expect(find.text(product.category.toUpperCase()), findsOneWidget);
-      expect(find.text('₹${product.price.toStringAsFixed(2)}'), findsOneWidget);
+        expect(find.text(product.title), findsOneWidget);
+        expect(find.text(product.category.toUpperCase()), findsOneWidget);
+        expect(
+          find.text('₹${product.price.toStringAsFixed(2)}'),
+          findsOneWidget,
+        );
 
-      // Scroll to reveal description and action button
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
-      await tester.pump();
+        // Scroll to reveal description and action button
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+        await tester.pump();
 
-      expect(find.text(product.description), findsOneWidget);
-      expect(find.text('Add to Cart'), findsOneWidget);
-    });
+        expect(find.text(product.description), findsOneWidget);
+        expect(find.text('Add to Cart'), findsOneWidget);
+      },
+    );
 
     testWidgets('displays loading indicator during loading state', (
       tester,
@@ -75,9 +77,7 @@ void main() {
               ),
             ),
           ],
-          child: const MaterialApp(
-            home: ProductDetailsPage(productId: '1'),
-          ),
+          child: const MaterialApp(home: ProductDetailsPage(productId: '1')),
         ),
       );
 

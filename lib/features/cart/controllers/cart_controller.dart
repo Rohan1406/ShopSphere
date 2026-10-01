@@ -33,7 +33,9 @@ class CartState {
   }) {
     return CartState(
       items: items ?? this.items,
-      discountPercent: clearPromo ? 0.0 : (discountPercent ?? this.discountPercent),
+      discountPercent: clearPromo
+          ? 0.0
+          : (discountPercent ?? this.discountPercent),
       appliedPromo: clearPromo ? null : (appliedPromo ?? this.appliedPromo),
     );
   }
@@ -78,7 +80,9 @@ class CartController extends Notifier<CartState> {
   }
 
   void addProduct(Product product, {int quantity = 1}) {
-    final existingIndex = state.items.indexWhere((item) => item.id == product.id);
+    final existingIndex = state.items.indexWhere(
+      (item) => item.id == product.id,
+    );
     if (existingIndex != -1) {
       final updatedList = List<CartItem>.from(state.items);
       final current = updatedList[existingIndex];

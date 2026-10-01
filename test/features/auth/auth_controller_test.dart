@@ -12,6 +12,7 @@ import 'package:shopsphere/features/auth/controllers/auth_controller.dart';
 import 'package:shopsphere/features/auth/models/auth_session.dart';
 
 class MockDio extends Mock implements Dio {}
+
 class MockTokenStorage extends Mock implements TokenStorage {}
 
 void main() {
@@ -25,10 +26,12 @@ void main() {
     mockStorage = MockTokenStorage();
     tokenManager = TokenManager(mockStorage);
 
-    when(() => mockStorage.saveTokens(
-      accessToken: any(named: 'accessToken'),
-      refreshToken: any(named: 'refreshToken'),
-    )).thenAnswer((_) async {});
+    when(
+      () => mockStorage.saveTokens(
+        accessToken: any(named: 'accessToken'),
+        refreshToken: any(named: 'refreshToken'),
+      ),
+    ).thenAnswer((_) async {});
 
     when(() => mockStorage.getAccessToken()).thenAnswer((_) async => null);
     when(() => mockStorage.getRefreshToken()).thenAnswer((_) async => null);
@@ -54,10 +57,12 @@ void main() {
     });
 
     test('login succeeds and saves tokens', () async {
-      when(() => mockDio.post<Map<String, dynamic>>(
-        ApiEndpoints.login,
-        data: any(named: 'data'),
-      )).thenAnswer(
+      when(
+        () => mockDio.post<Map<String, dynamic>>(
+          ApiEndpoints.login,
+          data: any(named: 'data'),
+        ),
+      ).thenAnswer(
         (_) async => Response(
           requestOptions: RequestOptions(path: ApiEndpoints.login),
           statusCode: 200,
@@ -78,17 +83,21 @@ void main() {
       final state = container.read(authControllerProvider);
       expect(state, isA<AuthAuthenticated>());
 
-      verify(() => mockStorage.saveTokens(
-        accessToken: 'test_access_jwt',
-        refreshToken: 'test_refresh_jwt',
-      )).called(1);
+      verify(
+        () => mockStorage.saveTokens(
+          accessToken: 'test_access_jwt',
+          refreshToken: 'test_refresh_jwt',
+        ),
+      ).called(1);
     });
 
     test('login falls back to demo offline mode on connection error', () async {
-      when(() => mockDio.post<Map<String, dynamic>>(
-        ApiEndpoints.login,
-        data: any(named: 'data'),
-      )).thenThrow(
+      when(
+        () => mockDio.post<Map<String, dynamic>>(
+          ApiEndpoints.login,
+          data: any(named: 'data'),
+        ),
+      ).thenThrow(
         DioException(
           requestOptions: RequestOptions(path: ApiEndpoints.login),
           type: DioExceptionType.connectionError,
@@ -106,17 +115,20 @@ void main() {
       expect(state, isA<AuthAuthenticated>());
     });
 
-    test('restoreSession emits AuthUnauthenticated when no tokens are stored', () async {
-      when(() => mockStorage.getAccessToken()).thenAnswer((_) async => null);
-      when(() => mockStorage.getRefreshToken()).thenAnswer((_) async => null);
+    test(
+      'restoreSession emits AuthUnauthenticated when no tokens are stored',
+      () async {
+        when(() => mockStorage.getAccessToken()).thenAnswer((_) async => null);
+        when(() => mockStorage.getRefreshToken()).thenAnswer((_) async => null);
 
-      final controller = container.read(authControllerProvider.notifier);
-      final result = await controller.restoreSession();
+        final controller = container.read(authControllerProvider.notifier);
+        final result = await controller.restoreSession();
 
-      expect(result, isA<Success<AuthSession?>>());
-      final state = container.read(authControllerProvider);
-      expect(state, isA<AuthUnauthenticated>());
-    });
+        expect(result, isA<Success<AuthSession?>>());
+        final state = container.read(authControllerProvider);
+        expect(state, isA<AuthUnauthenticated>());
+      },
+    );
 
     test('logout clears tokens and emits AuthUnauthenticated', () async {
       final controller = container.read(authControllerProvider.notifier);

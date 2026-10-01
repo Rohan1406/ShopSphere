@@ -8,10 +8,7 @@ import 'package:shopsphere/features/cart/controllers/cart_controller.dart';
 
 /// Shell widget providing a modern floating glassmorphic bottom navigation bar.
 class ScaffoldWithNavBar extends ConsumerWidget {
-  const ScaffoldWithNavBar({
-    required this.navigationShell,
-    super.key,
-  });
+  const ScaffoldWithNavBar({required this.navigationShell, super.key});
 
   final StatefulNavigationShell navigationShell;
 

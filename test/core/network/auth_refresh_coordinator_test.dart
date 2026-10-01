@@ -41,15 +41,9 @@ void main() {
         return 'token-$refreshCount';
       }
 
-      expect(
-        await coordinator.refresh(refresh),
-        'token-1',
-      );
+      expect(await coordinator.refresh(refresh), 'token-1');
 
-      expect(
-        await coordinator.refresh(refresh),
-        'token-2',
-      );
+      expect(await coordinator.refresh(refresh), 'token-2');
 
       expect(refreshCount, 2);
     });

@@ -116,12 +116,19 @@ class _CartPageState extends ConsumerState<CartPage> {
                 // Top Free Shipping Banner
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   color: AppColors.successSurface,
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.local_shipping_rounded, size: 16, color: AppColors.success),
+                      Icon(
+                        Icons.local_shipping_rounded,
+                        size: 16,
+                        color: AppColors.success,
+                      ),
                       SizedBox(width: 8),
                       Flexible(
                         child: Text(
@@ -144,7 +151,8 @@ class _CartPageState extends ConsumerState<CartPage> {
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: cartState.items.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 12),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final item = cartState.items[index];
                       return Container(
@@ -163,7 +171,9 @@ class _CartPageState extends ConsumerState<CartPage> {
                               decoration: BoxDecoration(
                                 color: AppColors.surfaceSubtle,
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: AppColors.borderLight),
+                                border: Border.all(
+                                  color: AppColors.borderLight,
+                                ),
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(11),
@@ -172,15 +182,15 @@ class _CartPageState extends ConsumerState<CartPage> {
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) =>
                                       const ColoredBox(
-                                    color: AppColors.surfaceSubtle,
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.image_not_supported_outlined,
-                                        color: AppColors.textMuted,
-                                        size: 24,
+                                        color: AppColors.surfaceSubtle,
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.image_not_supported_outlined,
+                                            color: AppColors.textMuted,
+                                            size: 24,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
                                 ),
                               ),
                             ),
@@ -216,8 +226,12 @@ class _CartPageState extends ConsumerState<CartPage> {
                                       Container(
                                         decoration: BoxDecoration(
                                           color: AppColors.surfaceSubtle,
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all(color: AppColors.border),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                          border: Border.all(
+                                            color: AppColors.border,
+                                          ),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
@@ -225,10 +239,14 @@ class _CartPageState extends ConsumerState<CartPage> {
                                             InkWell(
                                               onTap: () {
                                                 ref
-                                                    .read(cartControllerProvider.notifier)
+                                                    .read(
+                                                      cartControllerProvider
+                                                          .notifier,
+                                                    )
                                                     .decrementQuantity(item.id);
                                               },
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                               child: const Padding(
                                                 padding: EdgeInsets.all(5),
                                                 child: Icon(
@@ -239,7 +257,10 @@ class _CartPageState extends ConsumerState<CartPage> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                  ),
                                               child: Text(
                                                 '${item.quantity}',
                                                 style: const TextStyle(
@@ -251,10 +272,14 @@ class _CartPageState extends ConsumerState<CartPage> {
                                             InkWell(
                                               onTap: () {
                                                 ref
-                                                    .read(cartControllerProvider.notifier)
+                                                    .read(
+                                                      cartControllerProvider
+                                                          .notifier,
+                                                    )
                                                     .incrementQuantity(item.id);
                                               },
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                               child: const Padding(
                                                 padding: EdgeInsets.all(5),
                                                 child: Icon(
@@ -277,7 +302,9 @@ class _CartPageState extends ConsumerState<CartPage> {
                                         ),
                                         onPressed: () {
                                           ref
-                                              .read(cartControllerProvider.notifier)
+                                              .read(
+                                                cartControllerProvider.notifier,
+                                              )
                                               .removeItem(item.id);
                                         },
                                       ),
@@ -298,7 +325,9 @@ class _CartPageState extends ConsumerState<CartPage> {
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
                   decoration: BoxDecoration(
                     color: AppColors.surface,
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(24),
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.06),
@@ -336,12 +365,17 @@ class _CartPageState extends ConsumerState<CartPage> {
                                 },
                                 borderRadius: BorderRadius.circular(6),
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 3,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: AppColors.primarySurface,
                                     borderRadius: BorderRadius.circular(6),
                                     border: Border.all(
-                                      color: AppColors.primary.withValues(alpha: 0.3),
+                                      color: AppColors.primary.withValues(
+                                        alpha: 0.3,
+                                      ),
                                     ),
                                   ),
                                   child: const Text(
@@ -362,12 +396,17 @@ class _CartPageState extends ConsumerState<CartPage> {
                                 },
                                 borderRadius: BorderRadius.circular(6),
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 3,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: AppColors.secondarySurface,
                                     borderRadius: BorderRadius.circular(6),
                                     border: Border.all(
-                                      color: AppColors.secondary.withValues(alpha: 0.3),
+                                      color: AppColors.secondary.withValues(
+                                        alpha: 0.3,
+                                      ),
                                     ),
                                   ),
                                   child: const Text(
@@ -391,7 +430,8 @@ class _CartPageState extends ConsumerState<CartPage> {
                             Expanded(
                               child: TextField(
                                 controller: _promoController,
-                                textCapitalization: TextCapitalization.characters,
+                                textCapitalization:
+                                    TextCapitalization.characters,
                                 decoration: InputDecoration(
                                   hintText: 'Promo Code (e.g. TECH40)',
                                   prefixIcon: const Icon(
@@ -542,15 +582,22 @@ class _CartPageState extends ConsumerState<CartPage> {
                           height: 52,
                           child: FilledButton.icon(
                             onPressed: () {
-                              ref.read(cartControllerProvider.notifier).clearCart();
+                              ref
+                                  .read(cartControllerProvider.notifier)
+                                  .clearCart();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('🎉 Order placed successfully! Thank you for shopping.'),
+                                  content: Text(
+                                    '🎉 Order placed successfully! Thank you for shopping.',
+                                  ),
                                   backgroundColor: AppColors.success,
                                 ),
                               );
                             },
-                            icon: const Icon(Icons.lock_outline_rounded, size: 18),
+                            icon: const Icon(
+                              Icons.lock_outline_rounded,
+                              size: 18,
+                            ),
                             label: const Text(
                               'Proceed to Checkout',
                               style: TextStyle(
@@ -569,4 +616,3 @@ class _CartPageState extends ConsumerState<CartPage> {
     );
   }
 }
-

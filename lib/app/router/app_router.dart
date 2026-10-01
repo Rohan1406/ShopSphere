@@ -43,7 +43,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       if (authState is AuthUnauthenticated || authState is AuthError) {
         if (isLogin) return null;
         final target = state.uri.toString();
-        if (target.isNotEmpty && target != '/' && target != '/startup' && target != '/login') {
+        if (target.isNotEmpty &&
+            target != '/' &&
+            target != '/startup' &&
+            target != '/login') {
           return '/login?from=${Uri.encodeComponent(target)}';
         }
         return '/login';
@@ -172,22 +175,23 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return CustomTransitionPage(
             key: state.pageKey,
             child: ProductDetailsPage(productId: productId),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              final curvedAnimation = CurvedAnimation(
-                parent: animation,
-                curve: Curves.easeOutCubic,
-              );
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0.0, 0.08),
-                  end: Offset.zero,
-                ).animate(curvedAnimation),
-                child: FadeTransition(
-                  opacity: curvedAnimation,
-                  child: child,
-                ),
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  final curvedAnimation = CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                  );
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0.0, 0.08),
+                      end: Offset.zero,
+                    ).animate(curvedAnimation),
+                    child: FadeTransition(
+                      opacity: curvedAnimation,
+                      child: child,
+                    ),
+                  );
+                },
             transitionDuration: const Duration(milliseconds: 300),
           );
         },

@@ -31,52 +31,58 @@ void main() {
       expect(state, isA<ProductInitial>());
     });
 
-    test('fetchProducts succeeds and emits ProductLoaded when API returns list', () async {
-      when(() => mockDio.get(ApiEndpoints.products)).thenAnswer(
-        (_) async => Response(
-          requestOptions: RequestOptions(path: ApiEndpoints.products),
-          statusCode: 200,
-          data: [
-            {
-              'id': '1',
-              'title': 'Test Headphone',
-              'description': 'Noise cancelling',
-              'price': 199.99,
-              'imageUrl': 'https://example.com/img.jpg',
-            }
-          ],
-        ),
-      );
+    test(
+      'fetchProducts succeeds and emits ProductLoaded when API returns list',
+      () async {
+        when(() => mockDio.get(ApiEndpoints.products)).thenAnswer(
+          (_) async => Response(
+            requestOptions: RequestOptions(path: ApiEndpoints.products),
+            statusCode: 200,
+            data: [
+              {
+                'id': '1',
+                'title': 'Test Headphone',
+                'description': 'Noise cancelling',
+                'price': 199.99,
+                'imageUrl': 'https://example.com/img.jpg',
+              },
+            ],
+          ),
+        );
 
-      final controller = container.read(productControllerProvider.notifier);
-      final result = await controller.fetchProducts();
+        final controller = container.read(productControllerProvider.notifier);
+        final result = await controller.fetchProducts();
 
-      expect(result, isA<Success<List<Product>>>());
-      final state = container.read(productControllerProvider);
-      expect(state, isA<ProductLoaded>());
-      final loaded = state as ProductLoaded;
-      expect(loaded.products, hasLength(1));
-      expect(loaded.products.first.id, '1');
-      expect(loaded.products.first.title, 'Test Headphone');
-    });
+        expect(result, isA<Success<List<Product>>>());
+        final state = container.read(productControllerProvider);
+        expect(state, isA<ProductLoaded>());
+        final loaded = state as ProductLoaded;
+        expect(loaded.products, hasLength(1));
+        expect(loaded.products.first.id, '1');
+        expect(loaded.products.first.title, 'Test Headphone');
+      },
+    );
 
-    test('fetchProducts falls back to dummy products on connection error', () async {
-      when(() => mockDio.get(ApiEndpoints.products)).thenThrow(
-        DioException(
-          requestOptions: RequestOptions(path: ApiEndpoints.products),
-          type: DioExceptionType.connectionError,
-        ),
-      );
+    test(
+      'fetchProducts falls back to dummy products on connection error',
+      () async {
+        when(() => mockDio.get(ApiEndpoints.products)).thenThrow(
+          DioException(
+            requestOptions: RequestOptions(path: ApiEndpoints.products),
+            type: DioExceptionType.connectionError,
+          ),
+        );
 
-      final controller = container.read(productControllerProvider.notifier);
-      final result = await controller.fetchProducts();
+        final controller = container.read(productControllerProvider.notifier);
+        final result = await controller.fetchProducts();
 
-      expect(result, isA<Success<List<Product>>>());
-      final state = container.read(productControllerProvider);
-      expect(state, isA<ProductLoaded>());
-      final loaded = state as ProductLoaded;
-      expect(loaded.products.isNotEmpty, isTrue);
-    });
+        expect(result, isA<Success<List<Product>>>());
+        final state = container.read(productControllerProvider);
+        expect(state, isA<ProductLoaded>());
+        final loaded = state as ProductLoaded;
+        expect(loaded.products.isNotEmpty, isTrue);
+      },
+    );
   });
 
   group('ProductDetailsController', () {
@@ -100,7 +106,9 @@ void main() {
         ),
       );
 
-      final controller = container.read(productDetailsControllerProvider('1').notifier);
+      final controller = container.read(
+        productDetailsControllerProvider('1').notifier,
+      );
       final result = await controller.fetchProduct();
 
       expect(result, isA<Success<Product>>());
@@ -118,7 +126,9 @@ void main() {
         ),
       );
 
-      final controller = container.read(productDetailsControllerProvider('1').notifier);
+      final controller = container.read(
+        productDetailsControllerProvider('1').notifier,
+      );
       final result = await controller.fetchProduct();
 
       expect(result, isA<Success<Product>>());

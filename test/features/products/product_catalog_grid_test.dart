@@ -82,10 +82,7 @@ void main() {
 
       // Verify title & price display
       expect(find.text(product.title), findsOneWidget);
-      expect(
-        find.text('₹${product.price.toStringAsFixed(2)}'),
-        findsOneWidget,
-      );
+      expect(find.text('₹${product.price.toStringAsFixed(2)}'), findsOneWidget);
       expect(find.byIcon(Icons.add_shopping_cart_rounded), findsOneWidget);
 
       // Tap add to cart

@@ -13,9 +13,7 @@ void main() {
     });
 
     test('Error contains the expected failure', () {
-      const failure = Failure(
-        message: 'Something went wrong.',
-      );
+      const failure = Failure(message: 'Something went wrong.');
 
       const result = Error<String>(failure);
 
@@ -24,10 +22,7 @@ void main() {
     });
 
     test('Success can contain a list of data', () {
-      const result = Success<List<String>>([
-        'Product 1',
-        'Product 2',
-      ]);
+      const result = Success<List<String>>(['Product 1', 'Product 2']);
 
       expect(result.data, hasLength(2));
       expect(result.data.first, 'Product 1');

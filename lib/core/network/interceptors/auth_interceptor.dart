@@ -8,16 +8,15 @@ class AuthInterceptor extends QueuedInterceptor {
     required Dio dio,
     required TokenManager tokenManager,
     required Future<String?> Function() refreshToken,
-  })  : _dio = dio,
-        _tokenManager = tokenManager,
-        _refreshToken = refreshToken;
+  }) : _dio = dio,
+       _tokenManager = tokenManager,
+       _refreshToken = refreshToken;
 
   final Dio _dio;
   final TokenManager _tokenManager;
   final Future<String?> Function() _refreshToken;
 
-  final AuthRefreshCoordinator _refreshCoordinator =
-      AuthRefreshCoordinator();
+  final AuthRefreshCoordinator _refreshCoordinator = AuthRefreshCoordinator();
 
   @override
   Future<void> onRequest(
@@ -58,9 +57,7 @@ class AuthInterceptor extends QueuedInterceptor {
       return;
     }
 
-    final newAccessToken = await _refreshCoordinator.refresh(
-      _refreshToken,
-    );
+    final newAccessToken = await _refreshCoordinator.refresh(_refreshToken);
 
     if (newAccessToken == null || newAccessToken.isEmpty) {
       handler.next(err);
@@ -73,15 +70,10 @@ class AuthInterceptor extends QueuedInterceptor {
           ...request.headers,
           'Authorization': 'Bearer $newAccessToken',
         },
-        extra: {
-          ...request.extra,
-          'retried': true,
-        },
+        extra: {...request.extra, 'retried': true},
       );
 
-      final response = await _dio.fetch<dynamic>(
-        retryOptions,
-      );
+      final response = await _dio.fetch<dynamic>(retryOptions);
 
       handler.resolve(response);
     } on DioException catch (retryError) {

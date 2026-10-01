@@ -56,7 +56,11 @@ class _HomePageState extends ConsumerState<HomePage> {
         title: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.shopping_bag_rounded, color: AppColors.primary, size: 22),
+            Icon(
+              Icons.shopping_bag_rounded,
+              color: AppColors.primary,
+              size: 22,
+            ),
             SizedBox(width: 8),
             Text(
               'ShopSphere',
@@ -215,7 +219,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   scrollDirection: Axis.horizontal,
                   itemCount: DummyData.promoBanners.length,
-                  separatorBuilder: (context, index) => const SizedBox(width: 14),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 14),
                   itemBuilder: (context, index) {
                     final banner = DummyData.promoBanners[index];
                     final gradients = [
@@ -228,11 +233,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                     return InkWell(
                       onTap: () {
                         final code = banner['code'] as String;
-                        ref.read(cartControllerProvider.notifier).applyPromo(code);
+                        ref
+                            .read(cartControllerProvider.notifier)
+                            .applyPromo(code);
                         ScaffoldMessenger.of(context).hideCurrentSnackBar();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('🎉 Promo code "$code" applied to your cart!'),
+                            content: Text(
+                              '🎉 Promo code "$code" applied to your cart!',
+                            ),
                             action: SnackBarAction(
                               label: 'View Cart',
                               textColor: AppColors.amber,
@@ -295,7 +304,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                                       vertical: 3,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.black.withValues(alpha: 0.25),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.25,
+                                      ),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
@@ -493,4 +504,3 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 }
-

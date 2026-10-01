@@ -5,13 +5,11 @@ import 'package:shopsphere/features/profile/views/pages/profile_page.dart';
 
 void main() {
   group('ProfilePage', () {
-    testWidgets('displays user profile information and options', (tester) async {
+    testWidgets('displays user profile information and options', (
+      tester,
+    ) async {
       await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(
-            home: ProfilePage(),
-          ),
-        ),
+        const ProviderScope(child: MaterialApp(home: ProfilePage())),
       );
 
       expect(find.text('My Profile'), findsOneWidget);

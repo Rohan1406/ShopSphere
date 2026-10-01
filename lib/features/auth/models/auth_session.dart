@@ -2,10 +2,7 @@ class AuthSession {
   final String accessToken;
   final String refreshToken;
 
-  const AuthSession({
-    required this.accessToken,
-    required this.refreshToken,
-  });
+  const AuthSession({required this.accessToken, required this.refreshToken});
 
   factory AuthSession.fromJson(Map<String, dynamic> json) {
     return AuthSession(
@@ -15,16 +12,10 @@ class AuthSession {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'access_token': accessToken,
-      'refresh_token': refreshToken,
-    };
+    return {'access_token': accessToken, 'refresh_token': refreshToken};
   }
 
-  AuthSession copyWith({
-    String? accessToken,
-    String? refreshToken,
-  }) {
+  AuthSession copyWith({String? accessToken, String? refreshToken}) {
     return AuthSession(
       accessToken: accessToken ?? this.accessToken,
       refreshToken: refreshToken ?? this.refreshToken,

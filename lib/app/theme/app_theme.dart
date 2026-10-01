@@ -39,10 +39,7 @@ abstract final class AppTheme {
           fontWeight: FontWeight.w700,
           letterSpacing: -0.3,
         ),
-        iconTheme: IconThemeData(
-          color: AppColors.textPrimary,
-          size: 22,
-        ),
+        iconTheme: IconThemeData(color: AppColors.textPrimary, size: 22),
       ),
       cardTheme: CardThemeData(
         color: AppColors.surface,
@@ -87,7 +84,10 @@ abstract final class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         hintStyle: const TextStyle(
           color: AppColors.textMuted,
           fontSize: 14,
@@ -139,15 +139,9 @@ abstract final class AppTheme {
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const IconThemeData(
-              color: AppColors.primary,
-              size: 24,
-            );
+            return const IconThemeData(color: AppColors.primary, size: 24);
           }
-          return const IconThemeData(
-            color: AppColors.textSecondary,
-            size: 22,
-          );
+          return const IconThemeData(color: AppColors.textSecondary, size: 22);
         }),
       ),
       snackBarTheme: SnackBarThemeData(
@@ -158,9 +152,7 @@ abstract final class AppTheme {
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
@@ -219,4 +211,3 @@ abstract final class AppTheme {
     );
   }
 }
-

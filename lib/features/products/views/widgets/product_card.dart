@@ -29,7 +29,10 @@ class ProductCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _ProductImage(imageUrl: product.imageUrl, category: product.category),
+              _ProductImage(
+                imageUrl: product.imageUrl,
+                category: product.category,
+              ),
               const SizedBox(width: 14),
               Expanded(child: _ProductInformation(product: product)),
             ],
@@ -113,9 +116,13 @@ class _ProductInformation extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            if (product.category.isNotEmpty && product.category != 'general') ...[
+            if (product.category.isNotEmpty &&
+                product.category != 'general') ...[
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 2.5,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.primarySurface,
                   borderRadius: BorderRadius.circular(6),
@@ -235,7 +242,10 @@ class _ProductInformation extends ConsumerWidget {
               },
               borderRadius: BorderRadius.circular(10),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.primarySurface,
                   borderRadius: BorderRadius.circular(10),

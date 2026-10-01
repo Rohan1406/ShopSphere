@@ -81,16 +81,18 @@ class AuthController extends Notifier<AuthState> {
 
       final hasValidToken = await _tokenManager.hasValidAccessToken();
       if (!hasValidToken) {
-        final refreshedResult = await refreshSession(refreshToken: refreshToken);
+        final refreshedResult = await refreshSession(
+          refreshToken: refreshToken,
+        );
         return switch (refreshedResult) {
           Success(:final data) => () {
-              state = const AuthAuthenticated();
-              return Success<AuthSession?>(data);
-            }(),
+            state = const AuthAuthenticated();
+            return Success<AuthSession?>(data);
+          }(),
           Error(:final failure) => () {
-              state = AuthError(failure.message);
-              return Error<AuthSession?>(failure);
-            }(),
+            state = AuthError(failure.message);
+            return Error<AuthSession?>(failure);
+          }(),
         };
       }
 
@@ -120,7 +122,9 @@ class AuthController extends Notifier<AuthState> {
 
       final data = response.data;
       if (data == null) {
-        throw const ParsingException(message: 'Authentication response was empty.');
+        throw const ParsingException(
+          message: 'Authentication response was empty.',
+        );
       }
 
       final session = AuthSession.fromJson(data);
@@ -135,7 +139,8 @@ class AuthController extends Notifier<AuthState> {
       final mappedException = mapDioException(exception);
 
       // Offline mock fallback: if network is unreachable, permit demo login
-      if (mappedException is NetworkException || mappedException is TimeoutException) {
+      if (mappedException is NetworkException ||
+          mappedException is TimeoutException) {
         final mockToken = DummyData.generateMockJwt(email: email);
         final mockSession = AuthSession(
           accessToken: mockToken,

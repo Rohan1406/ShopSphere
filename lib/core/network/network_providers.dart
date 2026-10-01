@@ -11,4 +11,3 @@ final dioClientProvider = Provider<DioClient>((ref) {
 final dioProvider = Provider<Dio>((ref) {
   return ref.watch(appDioProvider);
 });
-

@@ -62,7 +62,10 @@ class ProductController extends Notifier<ProductState> {
       final response = await _dio.get(endpoint);
       final rawList = response.data as List<dynamic>;
       final products = rawList
-          .map((item) => ProductModelAdapter.fromJson(item as Map<String, dynamic>))
+          .map(
+            (item) =>
+                ProductModelAdapter.fromJson(item as Map<String, dynamic>),
+          )
           .toList();
 
       state = ProductLoaded(products);
@@ -70,7 +73,8 @@ class ProductController extends Notifier<ProductState> {
     } on DioException catch (exception) {
       final mappedException = mapDioException(exception);
       // If offline or connection error, serve rich mock products gracefully
-      if (mappedException is NetworkException || mappedException is TimeoutException) {
+      if (mappedException is NetworkException ||
+          mappedException is TimeoutException) {
         final mockProducts = (category != null && category != 'all')
             ? DummyData.findProductsByCategory(category)
             : DummyData.products;
@@ -112,7 +116,9 @@ class ProductController extends Notifier<ProductState> {
 
 /// Provider for the currently selected category ID ('all' by default)
 final selectedCategoryProvider =
-    NotifierProvider<SelectedCategoryNotifier, String>(SelectedCategoryNotifier.new);
+    NotifierProvider<SelectedCategoryNotifier, String>(
+      SelectedCategoryNotifier.new,
+    );
 
 class SelectedCategoryNotifier extends Notifier<String> {
   @override
@@ -146,7 +152,10 @@ class ProductSearchQueryNotifier extends Notifier<String> {
 final filteredProductsProvider = Provider<List<Product>>((ref) {
   final productState = ref.watch(productControllerProvider);
   final selectedCategory = ref.watch(selectedCategoryProvider);
-  final searchQuery = ref.watch(productSearchQueryProvider).trim().toLowerCase();
+  final searchQuery = ref
+      .watch(productSearchQueryProvider)
+      .trim()
+      .toLowerCase();
 
   final List<Product> baseProducts = switch (productState) {
     ProductLoaded(:final products) => products,
@@ -154,10 +163,12 @@ final filteredProductsProvider = Provider<List<Product>>((ref) {
   };
 
   return baseProducts.where((product) {
-    final matchesCategory = selectedCategory == 'all' ||
+    final matchesCategory =
+        selectedCategory == 'all' ||
         product.category.toLowerCase() == selectedCategory.toLowerCase();
 
-    final matchesSearch = searchQuery.isEmpty ||
+    final matchesSearch =
+        searchQuery.isEmpty ||
         product.title.toLowerCase().contains(searchQuery) ||
         product.description.toLowerCase().contains(searchQuery) ||
         product.category.toLowerCase().contains(searchQuery);
@@ -167,22 +178,29 @@ final filteredProductsProvider = Provider<List<Product>>((ref) {
 });
 
 /// Related products in the same category
-final relatedProductsProvider =
-    Provider.family<List<Product>, String>((ref, productId) {
-      final productState = ref.watch(productControllerProvider);
-      final List<Product> allProducts = switch (productState) {
-        ProductLoaded(:final products) => products,
-        _ => DummyData.products,
-      };
+final relatedProductsProvider = Provider.family<List<Product>, String>((
+  ref,
+  productId,
+) {
+  final productState = ref.watch(productControllerProvider);
+  final List<Product> allProducts = switch (productState) {
+    ProductLoaded(:final products) => products,
+    _ => DummyData.products,
+  };
 
-      final current = allProducts.where((p) => p.id == productId).firstOrNull ??
-          DummyData.findProductById(productId);
-      if (current == null) return const [];
+  final current =
+      allProducts.where((p) => p.id == productId).firstOrNull ??
+      DummyData.findProductById(productId);
+  if (current == null) return const [];
 
-      return allProducts
-          .where((p) => p.id != productId && p.category.toLowerCase() == current.category.toLowerCase())
-          .toList();
-    });
+  return allProducts
+      .where(
+        (p) =>
+            p.id != productId &&
+            p.category.toLowerCase() == current.category.toLowerCase(),
+      )
+      .toList();
+});
 
 // ==========================================
 // 3. PRODUCT DETAILS STATE & CONTROLLER
@@ -211,9 +229,11 @@ final class ProductDetailsError extends ProductDetailsState {
 }
 
 final productDetailsControllerProvider =
-    NotifierProvider.family<ProductDetailsController, ProductDetailsState, String>(
-      ProductDetailsController.new,
-    );
+    NotifierProvider.family<
+      ProductDetailsController,
+      ProductDetailsState,
+      String
+    >(ProductDetailsController.new);
 
 /// Alias for backwards compatibility
 final productDetailsNotifierProvider = productDetailsControllerProvider;
@@ -267,7 +287,9 @@ class ProductDetailsController extends Notifier<ProductDetailsState> {
         state = ProductDetailsLoaded(mockProduct);
         return Success(mockProduct);
       }
-      final failure = Failure(message: 'Failed to load product details: $error');
+      final failure = Failure(
+        message: 'Failed to load product details: $error',
+      );
       state = ProductDetailsError(failure);
       return Error(failure);
     }
@@ -278,8 +300,9 @@ class ProductDetailsController extends Notifier<ProductDetailsState> {
 // 4. FAVORITES / WISHLIST STATE & CONTROLLER
 // ==========================================
 
-final favoritesProvider =
-    NotifierProvider<FavoritesNotifier, Set<String>>(FavoritesNotifier.new);
+final favoritesProvider = NotifierProvider<FavoritesNotifier, Set<String>>(
+  FavoritesNotifier.new,
+);
 
 class FavoritesNotifier extends Notifier<Set<String>> {
   @override
@@ -304,4 +327,3 @@ class FavoritesNotifier extends Notifier<Set<String>> {
 abstract final class ProductModelAdapter {
   static Product fromJson(Map<String, dynamic> json) => Product.fromJson(json);
 }
-
