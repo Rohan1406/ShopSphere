@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shopsphere/core/mock/dummy_data.dart';
 import 'package:shopsphere/features/cart/controllers/cart_controller.dart';
 import 'package:shopsphere/features/checkout/controllers/checkout_controller.dart';
 import 'package:shopsphere/features/checkout/models/delivery_option.dart';
 import 'package:shopsphere/features/profile/controllers/profile_controllers.dart';
 import 'package:shopsphere/features/profile/models/address.dart';
-import 'package:shopsphere/features/profile/models/coupon.dart';
 import 'package:shopsphere/features/profile/models/order.dart';
 import 'package:shopsphere/features/profile/models/payment_method.dart';
 
@@ -175,7 +173,6 @@ void main() {
       'placeOrder creates order in OrdersController and clears cart',
       () async {
         final notifier = container.read(checkoutControllerProvider.notifier);
-        final cartNotifier = container.read(cartControllerProvider.notifier);
 
         // Ensure cart has items
         expect(container.read(cartControllerProvider).isNotEmpty, isTrue);

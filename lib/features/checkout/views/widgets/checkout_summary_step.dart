@@ -5,7 +5,6 @@ import 'package:shopsphere/features/cart/controllers/cart_controller.dart';
 import 'package:shopsphere/features/checkout/controllers/checkout_controller.dart';
 import 'package:shopsphere/features/checkout/models/delivery_option.dart';
 import 'package:shopsphere/features/profile/controllers/profile_controllers.dart';
-import 'package:shopsphere/features/profile/models/coupon.dart';
 
 class CheckoutSummaryStep extends ConsumerStatefulWidget {
   const CheckoutSummaryStep({super.key});
