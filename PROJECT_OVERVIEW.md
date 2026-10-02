@@ -132,11 +132,31 @@ shopsphere/
 │       │           ├── category_filter_bar.dart  # Horizontal category chips with count badges
 │       │           ├── product_card.dart         # Standard product card widget
 │       │           └── product_grid_card.dart    # Luxury 2-column catalog grid card
-│       └── profile/                      # User Profile Feature
+│       └── profile/                      # User Profile Feature (Full Suite)
+│           ├── controllers/
+│           │   └── profile_controllers.dart # UserProfile, Orders, Addresses, PaymentMethods, Coupons, Notifications, Support Controllers
+│           ├── models/
+│           │   ├── address.dart          # Delivery address entity & AddressType enum
+│           │   ├── coupon.dart           # Promo voucher model & rewards data
+│           │   ├── notification_settings.dart # Granular push/email/SMS/WhatsApp preferences
+│           │   ├── order.dart            # Order entity, OrderStatus & tracking timeline steps
+│           │   ├── payment_method.dart   # PaymentCard, UpiPayment & CardBrand models
+│           │   ├── support_item.dart     # FaqItem & SupportTicket models
+│           │   └── user_profile.dart     # UserProfile domain model with VIP tiers
 │           └── views/
 │               └── pages/
-│                   └── profile_page.dart # VIP member banner, stats & settings menu UI
-└── test/                                 # Complete automated test suite (83 tests)
+│                   ├── addresses_page.dart # Saved delivery addresses & Add/Edit modal
+│                   ├── coupons_page.dart # Reward points banner, voucher cards & code claim
+│                   ├── edit_profile_page.dart # Profile editor form with field validation
+│                   ├── my_orders_page.dart # Tabbed order list (All, Active, Delivered, Cancelled)
+│                   ├── notification_settings_page.dart # Granular alert preference toggles
+│                   ├── order_detail_page.dart # Interactive tracking stepper, invoice & item details
+│                   ├── payment_methods_page.dart # Virtual cards, UPI wallets & Add card/UPI
+│                   ├── privacy_security_page.dart # 2FA, biometrics, password change & sessions
+│                   ├── profile_page.dart # Main profile screen with stats, orders, & menu
+│                   ├── support_page.dart # 24/7 Live chat concierge, FAQs & ticket submission
+│                   └── wishlist_page.dart # Favorited luxury catalog picks with Add to Cart
+└── test/                                 # Complete automated test suite (117 tests)
     ├── widget_test.dart                  # App bootstrap smoke test
     ├── app/
     │   └── router/app_router_test.dart
@@ -168,7 +188,18 @@ shopsphere/
         │   ├── product_controller_test.dart
         │   └── product_details_page_test.dart
         └── profile/
-            └── profile_page_test.dart
+            ├── addresses_page_test.dart
+            ├── coupons_page_test.dart
+            ├── edit_profile_page_test.dart
+            ├── my_orders_page_test.dart
+            ├── notification_settings_page_test.dart
+            ├── order_detail_page_test.dart
+            ├── payment_methods_page_test.dart
+            ├── privacy_security_page_test.dart
+            ├── profile_controllers_test.dart
+            ├── profile_page_test.dart
+            ├── support_page_test.dart
+            └── wishlist_page_test.dart
 ```
 
 ---
@@ -178,9 +209,10 @@ shopsphere/
 ```mermaid
 flowchart TD
     subgraph View ["View Layer (UI & Widgets)"]
-        V1["Pages: HomePage, ProductsPage, ProductDetailsPage, CartPage, ProfilePage, LoginPage"]
-        V2["Widgets: ProductGridCard, CategoryFilterBar, ProductCard, ScaffoldWithNavBar"]
-        V3["Startup: AuthStartupScreen"]
+        V1["Core Pages: HomePage, ProductsPage, ProductDetailsPage, CartPage, LoginPage"]
+        V2["Profile Suite: ProfilePage, EditProfilePage, MyOrdersPage, OrderDetailPage, AddressesPage, PaymentMethodsPage, WishlistPage, CouponsPage, NotificationSettingsPage, SupportPage, PrivacySecurityPage"]
+        V3["Widgets: ProductGridCard, CategoryFilterBar, ProductCard, ScaffoldWithNavBar"]
+        V4["Startup: AuthStartupScreen"]
     end
 
     subgraph Controller ["Controller Layer (State & Business Logic)"]
@@ -188,6 +220,7 @@ flowchart TD
         C2["ProductController (ProductState, Category Filter, Search)"]
         C3["ProductDetailsController (ProductDetailsState)"]
         C4["CartController (CartState, Promo Codes, Quantities)"]
+        C5["ProfileControllers (UserProfile, Orders, Addresses, PaymentMethods, Coupons, Notifications, Support)"]
     end
 
     subgraph Model ["Model Layer (Data Entities & Serialization)"]
@@ -195,6 +228,7 @@ flowchart TD
         M2["Category (ID, Name, Icon, Count)"]
         M3["AuthSession (Tokens, Expiry)"]
         M4["CartItem (Subtotal, Quantities)"]
+        M5["Profile Entities (UserProfile, Order, Address, PaymentCard, Coupon, NotificationSettings, FaqItem)"]
     end
 
     subgraph Services ["Core Infrastructure & Services"]
@@ -260,12 +294,37 @@ flowchart TD
   - 2-column featured products grid dynamically reacting to category selection.
   - Quick add-to-cart actions directly from the home feed.
 
-### 5.5. Profile & Settings (`lib/features/profile/`)
-- **View (`ProfilePage`)**:
-  - VIP Member tier card with user avatar and email.
-  - Quick account stats (Orders, Wishlist, Coupons).
-  - Categorized menu tiles (My Orders, Saved Addresses, Payment Methods, Push Notifications, Help & Support, Privacy Policy).
-  - Logout trigger with confirmation dialog and state reset.
+### 5.5. Profile & User Account Ecosystem (`lib/features/profile/`)
+- **Domain Models (`lib/features/profile/models/`)**:
+  - `UserProfile`: User details, membership tier (`VIP Diamond Member`), reward points (1,250 pts), phone number, birthday, and gender.
+  - `Order`, `OrderItem`, `OrderTrackingStep`: Complete order hierarchy with status badges (`Pending`, `Processing`, `Shipped`, `Delivered`, `Cancelled`), multi-step timeline tracking, item previews, delivery dates, and INR pricing.
+  - `Address`: Shipping locations with labels (`Home`, `Work`, `Other`), recipient contacts, full address lines, default badges, coordinates (`latitude`, `longitude`), and `landmark`.
+  - `GeoPoint` (`lib/features/profile/services/geo_location_service.dart`): Geographic point entity with reverse geocoding lookup and presets across Indian metropolitan hubs.
+  - `PaymentCard`, `UpiPayment`: Saved cards with dynamic brand recognition (`Visa`, `Mastercard`, `RuPay`, `Amex`), gradient themes, and UPI VPA IDs.
+  - `Coupon`: Discount vouchers with codes (`SHOPSPHERE50`, `WELCOME100`, `FASHION25`, `FREESHIP`), discount values, expiration countdowns, and terms.
+  - `NotificationSettings`: Granular switches across Order Deliveries, Exclusive Deals, Price Alerts, Recommendations, Email, SMS, and WhatsApp alerts.
+  - `FaqItem`, `SupportTicket`: FAQ knowledge base categories and customer issue ticketing state.
+- **State Controllers (`lib/features/profile/controllers/profile_controllers.dart`)**:
+  - `UserProfileController`: State notifier for editing profile information.
+  - `OrdersController`: State notifier for order retrieval, 1-tap re-ordering (populates cart), and order cancellation.
+  - `AddressesController`: CRUD notifier for adding, updating, removing, and switching default shipping addresses.
+  - `PaymentMethodsController`: Manages card/UPI additions, removals, and default payment method selection.
+  - `CouponsController`: Vouchers catalog and reward points claiming.
+  - `NotificationSettingsController`: Toggle management across all notification categories.
+  - `SupportTicketsController`: Support ticket submission and simulated 24/7 live assistance.
+- **Views & Sub-Pages (`lib/features/profile/views/pages/`)**:
+  - `ProfilePage`: VIP Gold/Diamond card, reactive quick statistics (Orders, Wishlist, Coupons), live delivery tracking banner with quick view, categorized navigation menu tiles, and confirmation logout modal.
+  - `EditProfilePage`: Profile editor with avatar upload trigger, form validation, date of birth picker, and gender choice chips.
+  - `MyOrdersPage`: Tabbed order filters (`All`, `Active`, `Delivered`, `Cancelled`), tracking previews, item thumbnail rows, and navigation to order details.
+  - `OrderDetailPage`: Visual tracking stepper timeline, itemized billing breakdown, invoice PDF modal preview, cancel order dialog, and 1-tap reorder.
+  - `AddressesPage`: Live GPS banner ("Current GPS Location"), interactive vector map location picker, embedded mini-map card previews (`AddressMapThumbnail`), and Add/Edit address bottom sheet with instant reverse geocoding.
+  - `GeographicMapPicker`: Interactive vector map canvas with pan/pinch-to-zoom, map styles (Standard / Dark / Satellite), pulsing GPS radar dot, draggable delivery pin, location search, and 1-tap coordinate confirmation.
+  - `PaymentMethodsPage`: Virtual credit cards with metallic/network gradient styling, UPI ID manager, and modal sheets for card/UPI creation.
+  - `WishlistPage`: Live reactive favorites grid with direct Add to Cart and remove actions.
+  - `CouponsPage`: Reward points balance card, active coupon vouchers with 1-tap code copy and redeemable discount claiming.
+  - `NotificationSettingsPage`: Organized toggle groups for Orders & Delivery, Promotions, and Communication Channels.
+  - `SupportPage`: Searchable FAQ accordion with category filters, ticket submission form, and interactive simulated 24/7 live chat modal.
+  - `PrivacySecurityPage`: Two-Factor Authentication (2FA) switch, Biometric login switch, Change Password bottom sheet, Active Sessions viewer, and Account Deletion confirmation flow.
 
 ### 5.6. Core Infrastructure & Networking (`lib/core/`)
 - **Network Pipeline**:
@@ -281,16 +340,17 @@ flowchart TD
 - **Routing (`AppRouter` & `ScaffoldWithNavBar`)**:
   - Declarative GoRouter routing with `StatefulShellRoute.indexedStack`.
   - Persistent bottom navigation preserving tab state across Home, Explore (Products), Cart, and Profile.
+  - Smooth slide transitions (`_buildSlideTransitionPage`) across all 10 Profile sub-routes.
   - Reactive auth redirect guards checking `AuthState` via `AuthRouterRefreshNotifier`.
 
 ---
 
 ## 6. Testing & Quality Assurance Summary
 
-The automated test suite consists of **83 automated unit, widget, and integration tests** executing in under 10 seconds:
+The automated test suite consists of **121 automated unit, widget, and integration tests** executing in under 15 seconds:
 
 ```
-00:08 +83: All tests passed!
+00:14 +121: All tests passed!
 ```
 
 ### Test Suite Breakdown:
@@ -309,6 +369,17 @@ The automated test suite consists of **83 automated unit, widget, and integratio
 | `logout_navigation_test.dart` | End-to-End Navigation | End-to-end router navigation after logout action |
 | `cart_page_test.dart` | CartPage & Controller | Item listing, quantity modifiers, promo code application, totals |
 | `profile_page_test.dart` | ProfilePage Widget | VIP tier banner, account stats, settings tiles, logout dialog |
+| `profile_controllers_test.dart` | Profile State Notifiers | User profile edits, order cancellation, reordering, address CRUD, card/UPI ops, coupon redemption, notification switches |
+| `edit_profile_page_test.dart` | EditProfilePage Widget | Form input editing, birthday picker, gender chips, profile saving |
+| `my_orders_page_test.dart` | MyOrdersPage Widget | Tab filters (All/Active/Delivered/Cancelled), order cards, item summaries |
+| `order_detail_page_test.dart` | OrderDetailPage Widget | Timeline stepper, invoice viewer sheet, cancel order dialog, reorder |
+| `addresses_page_test.dart` | AddressesPage & Map | Current GPS banner, vector map picker, map style switcher, search, address serialization |
+| `payment_methods_page_test.dart` | PaymentMethodsPage Widget | Virtual card gradients, UPI handles, add card/UPI bottom sheets |
+| `wishlist_page_test.dart` | WishlistPage Widget | Favorites grid, add-to-cart action, removal from wishlist |
+| `coupons_page_test.dart` | CouponsPage Widget | Reward points balance, coupon code copy feedback, voucher claiming |
+| `notification_settings_page_test.dart` | NotificationSettings Widget | Category toggles, push/SMS/email/WhatsApp switches |
+| `support_page_test.dart` | SupportPage Widget | Expandable FAQ items, ticket submission dialog, live chat modal |
+| `privacy_security_page_test.dart` | PrivacySecurityPage Widget | 2FA toggle, biometrics toggle, password sheet, active sessions, delete dialog |
 | `auth_interceptor_test.dart` | AuthInterceptor | Bearer injection, 401 intercept, token refresh retry, duplicate prevention |
 | `auth_refresh_coordinator_test.dart` | AuthRefreshCoordinator | Single-flight execution, concurrency deduplication, failure sharing |
 | `dio_error_mapper_test.dart` | DioErrorMapper | HTTP 400, 401, 403, 404, 422, 429, 500, 502 status code mappings |
@@ -330,7 +401,7 @@ ShopSphere runs an automated CI workflow on every push and pull request targetin
 2. **Dependency Resolution**: Runs `flutter pub get`.
 3. **Format Verification**: Checks code formatting with `dart format --set-exit-if-changed .`.
 4. **Static Analysis**: Runs `flutter analyze` with 0 allowable warnings or errors.
-5. **Automated Testing**: Executes `flutter test` across all 83 test suites.
+5. **Automated Testing**: Executes `flutter test` across all 121 test suites.
 
 ### 7.2. VS Code & Antigravity IDE Integration
 Configurations in `.vscode/` enable zero-friction developer workflows:
@@ -362,7 +433,7 @@ dart format --output=none --set-exit-if-changed .
 # 3. Run static analysis (0 errors, 0 warnings)
 flutter analyze
 
-# 4. Execute test suite (83 tests passing)
+# 4. Execute test suite (121 tests passing)
 flutter test
 
 # 5. Run application by environment
@@ -378,4 +449,4 @@ flutter run --dart-define-from-file=config/production.json
 
 ---
 
-*Documentation updated to reflect the latest Feature-First MVC architecture, category discovery engine, refreshed design system, CI/CD pipeline, and expanded test suite.*
+*Documentation updated to reflect the Geographic Map & Current Location features in Shipping Addresses, Category discovery engine, refreshed design system, CI/CD pipeline, and expanded 121-test suite.*

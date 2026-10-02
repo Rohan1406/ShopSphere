@@ -59,6 +59,12 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>ShopSphere requires your location to deliver orders to your current address and pinpoint delivery locations on the map.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>ShopSphere requires your location to deliver orders and track delivery routes.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>ShopSphere uses your location to pinpoint delivery addresses.</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
