@@ -582,17 +582,7 @@ class _CartPageState extends ConsumerState<CartPage> {
                           height: 52,
                           child: FilledButton.icon(
                             onPressed: () {
-                              ref
-                                  .read(cartControllerProvider.notifier)
-                                  .clearCart();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    '🎉 Order placed successfully! Thank you for shopping.',
-                                  ),
-                                  backgroundColor: AppColors.success,
-                                ),
-                              );
+                              context.push('/checkout');
                             },
                             icon: const Icon(
                               Icons.lock_outline_rounded,
