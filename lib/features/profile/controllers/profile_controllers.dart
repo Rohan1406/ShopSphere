@@ -58,6 +58,10 @@ class OrdersController extends Notifier<List<Order>> {
     return Order.dummyOrders();
   }
 
+  void addOrder(Order order) {
+    state = [order, ...state];
+  }
+
   bool cancelOrder(String orderId) {
     final index = state.indexWhere((o) => o.id == orderId);
     if (index == -1) return false;

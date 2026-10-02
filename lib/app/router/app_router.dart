@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shopsphere/features/auth/controllers/auth_controller.dart';
 import 'package:shopsphere/features/auth/views/pages/login_page.dart';
 import 'package:shopsphere/features/cart/views/pages/cart_page.dart';
+import 'package:shopsphere/features/checkout/views/pages/checkout_page.dart';
+import 'package:shopsphere/features/checkout/views/pages/order_success_page.dart';
 import 'package:shopsphere/features/home/views/pages/home_page.dart';
 import 'package:shopsphere/features/products/views/pages/product_details_page.dart';
 import 'package:shopsphere/features/products/views/pages/products_page.dart';
@@ -275,6 +277,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => _buildSlideTransitionPage(
           state: state,
           child: const PrivacySecurityPage(),
+        ),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/checkout',
+        pageBuilder: (context, state) => _buildSlideTransitionPage(
+          state: state,
+          child: const CheckoutPage(),
+        ),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/checkout/success',
+        pageBuilder: (context, state) => _buildSlideTransitionPage(
+          state: state,
+          child: const OrderSuccessPage(),
         ),
       ),
     ],
