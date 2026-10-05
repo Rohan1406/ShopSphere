@@ -145,14 +145,14 @@ class _ProductInformation extends ConsumerWidget {
                 color: AppColors.amberLight,
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.star_rounded, size: 13, color: AppColors.amber),
-                  SizedBox(width: 3),
+                  const Icon(Icons.star_rounded, size: 13, color: AppColors.amber),
+                  const SizedBox(width: 3),
                   Text(
-                    '4.8',
-                    style: TextStyle(
+                    product.rating.toStringAsFixed(1),
+                    style: const TextStyle(
                       fontSize: 10.5,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
@@ -163,7 +163,19 @@ class _ProductInformation extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
+
+        // Brand
+        Text(
+          product.brand.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 9.5,
+            fontWeight: FontWeight.w800,
+            color: AppColors.textMuted,
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 2),
 
         // Product Title
         Text(

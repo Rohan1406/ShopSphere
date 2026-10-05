@@ -67,39 +67,66 @@ class ProductGridCard extends ConsumerWidget {
                   ),
                 ),
 
-                // Category Tag (Top Left)
-                if (product.category.isNotEmpty &&
-                    product.category != 'general')
-                  Positioned(
-                    top: 8,
-                    left: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface.withValues(alpha: 0.92),
-                        borderRadius: BorderRadius.circular(6),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.08),
-                            blurRadius: 4,
-                            offset: const Offset(0, 1),
+                // Category & New Arrival Tag (Top Left)
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (product.category.isNotEmpty &&
+                          product.category != 'general')
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 3,
                           ),
-                        ],
-                      ),
-                      child: Text(
-                        product.category.toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 8.5,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
-                          letterSpacing: 0.4,
+                          decoration: BoxDecoration(
+                            color: AppColors.surface.withValues(alpha: 0.92),
+                            borderRadius: BorderRadius.circular(6),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.08),
+                                blurRadius: 4,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            product.category.toUpperCase(),
+                            style: const TextStyle(
+                              fontSize: 8.5,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.primary,
+                              letterSpacing: 0.4,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      if (product.isNewArrival) ...[
+                        const SizedBox(width: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 5,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.coral,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            'NEW',
+                            style: TextStyle(
+                              fontSize: 8,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
+                ),
 
                 // Rating Badge (Top Right)
                 Positioned(
@@ -121,18 +148,18 @@ class ProductGridCard extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.star_rounded,
                           size: 12,
                           color: AppColors.amber,
                         ),
-                        SizedBox(width: 2),
+                        const SizedBox(width: 2),
                         Text(
-                          '4.8',
-                          style: TextStyle(
+                          product.rating.toStringAsFixed(1),
+                          style: const TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textPrimary,
@@ -142,6 +169,35 @@ class ProductGridCard extends ConsumerWidget {
                     ),
                   ),
                 ),
+
+                // Out of Stock Overlay
+                if (!product.inStock)
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.black.withValues(alpha: 0.45),
+                      child: Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.error,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            'OUT OF STOCK',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
 
@@ -153,17 +209,32 @@ class ProductGridCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Product Title
-                    Text(
-                      product.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                        height: 1.25,
-                      ),
+                    // Brand & Product Title
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product.brand.toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.textMuted,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          product.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                            height: 1.25,
+                          ),
+                        ),
+                      ],
                     ),
 
                     // Price & Quick Add Button Row

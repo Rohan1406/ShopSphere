@@ -5,8 +5,11 @@ import 'package:shopsphere/app/theme/app_colors.dart';
 import 'package:shopsphere/core/mock/dummy_data.dart';
 import 'package:shopsphere/features/auth/controllers/auth_controller.dart';
 import 'package:shopsphere/features/cart/controllers/cart_controller.dart';
+import 'package:shopsphere/features/products/controllers/product_controller.dart';
 import 'package:shopsphere/features/products/views/widgets/category_filter_bar.dart';
 import 'package:shopsphere/features/products/views/widgets/product_card.dart';
+import 'package:shopsphere/features/products/views/widgets/product_filter_sheet.dart';
+import 'package:shopsphere/features/products/views/widgets/voice_search_modal.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -22,13 +25,33 @@ class _HomePageState extends ConsumerState<HomePage> {
     await ref.read(authControllerProvider.notifier).logout();
   }
 
-  void _navigateToCatalog([String? category]) {
+  void _navigateToCatalog([String? category, bool autoFocus = false]) {
     final cat = category ?? _selectedCategory;
     if (cat == 'all') {
-      context.push('/products');
+      context.push(autoFocus ? '/products?focus=true' : '/products');
     } else {
-      context.push('/products?category=$cat');
+      final focusParam = autoFocus ? '&focus=true' : '';
+      context.push('/products?category=$cat$focusParam');
     }
+  }
+
+  void _openVoiceSearch() {
+    VoiceSearchModal.show(
+      context,
+      onQueryRecognized: (query) {
+        ref.read(productSearchQueryProvider.notifier).updateQuery(query);
+        ref.read(recentSearchesProvider.notifier).addSearch(query);
+        context.push('/products');
+      },
+    );
+  }
+
+  void _openFilterSheet() {
+    ProductFilterSheet.show(context).then((_) {
+      if (mounted) {
+        context.push('/products');
+      }
+    });
   }
 
   @override
@@ -152,58 +175,86 @@ class _HomePageState extends ConsumerState<HomePage> {
                     const SizedBox(height: 14),
 
                     // Modern Search Box
-                    InkWell(
-                      onTap: () => _navigateToCatalog(),
-                      borderRadius: BorderRadius.circular(16),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 13,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.03),
-                              blurRadius: 10,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                          border: Border.all(color: AppColors.border),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.search_rounded,
-                              color: AppColors.primary,
-                              size: 22,
-                            ),
-                            const SizedBox(width: 12),
-                            const Expanded(
-                              child: Text(
-                                'Search products, brands, categories...',
-                                style: TextStyle(
-                                  color: AppColors.textMuted,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal,
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.03),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: () => _navigateToCatalog(null, true),
+                              borderRadius: const BorderRadius.horizontal(
+                                left: Radius.circular(16),
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 13,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.search_rounded,
+                                      color: AppColors.primary,
+                                      size: 22,
+                                    ),
+                                    SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        'Search products, brands...',
+                                        style: TextStyle(
+                                          color: AppColors.textMuted,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: AppColors.primarySurface,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(
-                                Icons.tune_rounded,
-                                size: 16,
-                                color: AppColors.primary,
+                          ),
+                          // Voice Search Icon Button
+                          IconButton(
+                            onPressed: _openVoiceSearch,
+                            icon: const Icon(
+                              Icons.mic_rounded,
+                              color: AppColors.primary,
+                              size: 20,
+                            ),
+                            tooltip: 'Voice Search',
+                          ),
+                          // Filter Sheet Icon Button
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: InkWell(
+                              onTap: _openFilterSheet,
+                              borderRadius: BorderRadius.circular(8),
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primarySurface,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.tune_rounded,
+                                  size: 16,
+                                  color: AppColors.primary,
+                                ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ],

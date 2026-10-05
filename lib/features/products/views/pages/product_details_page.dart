@@ -333,9 +333,10 @@ class _ProductDetailsContent extends StatelessWidget {
               const SizedBox(height: 14),
 
               // Price Row with Savings Badge
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 10,
+                runSpacing: 6,
                 children: [
                   Text(
                     '₹${product.price.toStringAsFixed(2)}',
@@ -346,7 +347,6 @@ class _ProductDetailsContent extends StatelessWidget {
                       letterSpacing: -0.5,
                     ),
                   ),
-                  const SizedBox(width: 10),
                   Text(
                     '₹${originalPrice.toStringAsFixed(0)}',
                     style: const TextStyle(
@@ -356,7 +356,6 @@ class _ProductDetailsContent extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(width: 10),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -499,13 +498,18 @@ class _ProductDetailsContent extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'More in ${product.category[0].toUpperCase()}${product.category.substring(1)}',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.2,
+                    Expanded(
+                      child: Text(
+                        'More in ${product.category[0].toUpperCase()}${product.category.substring(1)}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.2,
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 8),
                     TextButton(
                       onPressed: () => context.push(
                         '/products?category=${product.category}',
