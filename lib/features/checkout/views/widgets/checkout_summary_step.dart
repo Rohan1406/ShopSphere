@@ -848,8 +848,11 @@ class _CheckoutSummaryStepState extends ConsumerState<CheckoutSummaryStep> {
         const SizedBox(height: 20),
 
         // 7. Trust Badges
-        const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        const Wrap(
+          alignment: WrapAlignment.spaceAround,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 12,
+          runSpacing: 6,
           children: [
             _TrustBadge(
               icon: Icons.verified_user_outlined,
@@ -883,10 +886,13 @@ class _PriceRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+          ),
         ),
+        const SizedBox(width: 8),
         Text(
           amount,
           style: TextStyle(

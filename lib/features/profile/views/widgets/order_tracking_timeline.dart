@@ -26,20 +26,25 @@ class OrderTrackingTimeline extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Tracking Timeline',
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 14.5,
-                  color: AppColors.textPrimary,
+              const Expanded(
+                child: Text(
+                  'Tracking Timeline',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 14.5,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ),
-              Text(
-                'TRK: ${order.trackingNumber}',
-                style: const TextStyle(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.primary,
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  'TRK: ${order.trackingNumber}',
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary,
+                  ),
                 ),
               ),
             ],
@@ -103,19 +108,22 @@ class OrderTrackingTimeline extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              step.title,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 13.5,
-                                color: step.isCompleted || isCurrent
-                                    ? AppColors.textPrimary
-                                    : AppColors.textMuted,
+                            Expanded(
+                              child: Text(
+                                step.title,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 13.5,
+                                  color: step.isCompleted || isCurrent
+                                      ? AppColors.textPrimary
+                                      : AppColors.textMuted,
+                                ),
                               ),
                             ),
-                            if (step.timestamp.isNotEmpty)
+                            if (step.timestamp.isNotEmpty) ...[
+                              const SizedBox(width: 8),
                               Text(
                                 step.timestamp,
                                 style: const TextStyle(
@@ -124,6 +132,7 @@ class OrderTrackingTimeline extends StatelessWidget {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
+                            ],
                           ],
                         ),
                         const SizedBox(height: 2),

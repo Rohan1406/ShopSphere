@@ -133,7 +133,10 @@ class CurrentLocationGpsBanner extends ConsumerWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 8,
+                    ),
                     textStyle: const TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 12.5,

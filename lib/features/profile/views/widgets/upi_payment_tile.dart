@@ -26,9 +26,16 @@ class UpiPaymentTile extends ConsumerWidget {
       ),
       title: Row(
         children: [
-          Text(
-            upi.upiId,
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13.5),
+          Flexible(
+            child: Text(
+              upi.upiId,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 13.5,
+              ),
+            ),
           ),
           if (upi.isDefault) ...[
             const SizedBox(width: 8),

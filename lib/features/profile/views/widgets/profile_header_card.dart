@@ -51,12 +51,16 @@ class ProfileHeaderCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      profile.name,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 16,
-                        letterSpacing: -0.2,
+                    Flexible(
+                      child: Text(
+                        profile.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 16,
+                          letterSpacing: -0.2,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 6),
@@ -70,6 +74,8 @@ class ProfileHeaderCard extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   profile.email,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 13,
