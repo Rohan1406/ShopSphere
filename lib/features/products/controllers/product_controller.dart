@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shopsphere/core/errors/app_exception.dart';
 import 'package:shopsphere/core/errors/failure.dart';
@@ -8,6 +9,7 @@ import 'package:shopsphere/core/network/dio_error_mapper.dart';
 import 'package:shopsphere/core/network/network_providers.dart';
 import 'package:shopsphere/core/result/result.dart';
 import 'package:shopsphere/features/products/models/product.dart';
+import 'package:shopsphere/features/products/models/product_filter_state.dart';
 
 // ==========================================
 // 1. PRODUCT LIST STATE & CONTROLLER
@@ -111,7 +113,7 @@ class ProductController extends Notifier<ProductState> {
 }
 
 // ==========================================
-// 2. CATEGORY & SEARCH FILTER PROVIDERS
+// 2. CATEGORY, SEARCH & MULTI-FACET FILTER PROVIDERS
 // ==========================================
 
 /// Provider for the currently selected category ID ('all' by default)
@@ -148,7 +150,120 @@ class ProductSearchQueryNotifier extends Notifier<String> {
   }
 }
 
-/// Computed provider returning filtered products matching selectedCategory & searchQuery
+/// Provider for active multi-facet product filter state (price range, brands, rating, in-stock, sort)
+final productFilterProvider =
+    NotifierProvider<ProductFilterNotifier, ProductFilterState>(
+      ProductFilterNotifier.new,
+    );
+
+class ProductFilterNotifier extends Notifier<ProductFilterState> {
+  @override
+  ProductFilterState build() => ProductFilterState.initial();
+
+  void updatePriceRange(RangeValues priceRange) {
+    state = state.copyWith(priceRange: priceRange);
+  }
+
+  void toggleBrand(String brand) {
+    final current = Set<String>.from(state.selectedBrands);
+    final match = current.firstWhere(
+      (b) => b.toLowerCase() == brand.toLowerCase(),
+      orElse: () => '',
+    );
+    if (match.isNotEmpty) {
+      current.remove(match);
+    } else {
+      current.add(brand);
+    }
+    state = state.copyWith(selectedBrands: current);
+  }
+
+  void setBrandSelected(String brand, bool isSelected) {
+    final current = Set<String>.from(state.selectedBrands);
+    final match = current.firstWhere(
+      (b) => b.toLowerCase() == brand.toLowerCase(),
+      orElse: () => '',
+    );
+    if (isSelected) {
+      if (match.isEmpty) current.add(brand);
+    } else {
+      if (match.isNotEmpty) current.remove(match);
+    }
+    state = state.copyWith(selectedBrands: current);
+  }
+
+  void clearBrands() {
+    state = state.copyWith(selectedBrands: const {});
+  }
+
+  void setMinRating(double rating) {
+    state = state.copyWith(minRating: rating);
+  }
+
+  void setInStockOnly(bool inStockOnly) {
+    state = state.copyWith(inStockOnly: inStockOnly);
+  }
+
+  void setSortOption(ProductSortOption sortOption) {
+    state = state.copyWith(sortOption: sortOption);
+  }
+
+  void applyFilterState(ProductFilterState newState) {
+    state = newState;
+  }
+
+  void resetFilters() {
+    state = ProductFilterState.initial();
+  }
+}
+
+/// Provider for user recent search history with chip tags
+final recentSearchesProvider =
+    NotifierProvider<RecentSearchesNotifier, List<String>>(
+      RecentSearchesNotifier.new,
+    );
+
+class RecentSearchesNotifier extends Notifier<List<String>> {
+  @override
+  List<String> build() {
+    return [
+      'Sony Headphones',
+      'Nike Air Max',
+      'Apple Watch',
+      'Mechanical Keyboard',
+    ];
+  }
+
+  void addSearch(String query) {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) return;
+    final current = List<String>.from(state);
+    current.removeWhere((item) => item.toLowerCase() == trimmed.toLowerCase());
+    current.insert(0, trimmed);
+    if (current.length > 8) {
+      state = current.sublist(0, 8);
+    } else {
+      state = current;
+    }
+  }
+
+  void removeSearch(String query) {
+    final current = List<String>.from(state);
+    current.removeWhere((item) => item.toLowerCase() == query.toLowerCase());
+    state = current;
+  }
+
+  void clearSearches() {
+    state = const [];
+  }
+}
+
+/// Provider for curated trending search terms
+final trendingSearchesProvider = Provider<List<String>>((ref) {
+  return DummyData.trendingSearches;
+});
+
+/// Computed provider returning filtered & sorted products matching category, search, and multi-facet filters
 final filteredProductsProvider = Provider<List<Product>>((ref) {
   final productState = ref.watch(productControllerProvider);
   final selectedCategory = ref.watch(selectedCategoryProvider);
@@ -156,25 +271,79 @@ final filteredProductsProvider = Provider<List<Product>>((ref) {
       .watch(productSearchQueryProvider)
       .trim()
       .toLowerCase();
+  final filterState = ref.watch(productFilterProvider);
 
   final List<Product> baseProducts = switch (productState) {
     ProductLoaded(:final products) => products,
     _ => DummyData.products,
   };
 
-  return baseProducts.where((product) {
+  final filtered = baseProducts.where((product) {
+    // 1. Category Filter
     final matchesCategory =
         selectedCategory == 'all' ||
         product.category.toLowerCase() == selectedCategory.toLowerCase();
 
+    // 2. Search Query Filter (Title, Description, Category, Brand)
     final matchesSearch =
         searchQuery.isEmpty ||
         product.title.toLowerCase().contains(searchQuery) ||
         product.description.toLowerCase().contains(searchQuery) ||
-        product.category.toLowerCase().contains(searchQuery);
+        product.category.toLowerCase().contains(searchQuery) ||
+        product.brand.toLowerCase().contains(searchQuery);
 
-    return matchesCategory && matchesSearch;
+    // 3. Price Range Filter
+    final matchesPrice =
+        product.price >= filterState.priceRange.start &&
+        product.price <= filterState.priceRange.end;
+
+    // 4. Brand Filter
+    final matchesBrand =
+        filterState.selectedBrands.isEmpty ||
+        filterState.selectedBrands.any(
+          (b) => b.toLowerCase() == product.brand.toLowerCase(),
+        );
+
+    // 5. Customer Rating Threshold
+    final matchesRating = product.rating >= filterState.minRating;
+
+    // 6. In-Stock Only Filter
+    final matchesStock = !filterState.inStockOnly || product.inStock;
+
+    return matchesCategory &&
+        matchesSearch &&
+        matchesPrice &&
+        matchesBrand &&
+        matchesRating &&
+        matchesStock;
   }).toList();
+
+  // 7. Sorting Strategy
+  switch (filterState.sortOption) {
+    case ProductSortOption.featured:
+      // Preserve default relevance/curation order
+      break;
+    case ProductSortOption.priceLowToHigh:
+      filtered.sort((a, b) => a.price.compareTo(b.price));
+      break;
+    case ProductSortOption.priceHighToLow:
+      filtered.sort((a, b) => b.price.compareTo(a.price));
+      break;
+    case ProductSortOption.rating:
+      filtered.sort((a, b) => b.rating.compareTo(a.rating));
+      break;
+    case ProductSortOption.newestArrivals:
+      filtered.sort((a, b) {
+        if (a.isNewArrival && !b.isNewArrival) return -1;
+        if (!a.isNewArrival && b.isNewArrival) return 1;
+        final dateA = a.createdAt ?? DateTime(2020);
+        final dateB = b.createdAt ?? DateTime(2020);
+        return dateB.compareTo(dateA);
+      });
+      break;
+  }
+
+  return filtered;
 });
 
 /// Related products in the same category

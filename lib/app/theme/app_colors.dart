@@ -11,6 +11,9 @@ abstract final class AppColors {
   static const secondaryLight = Color(0xFFF472B6);
   static const secondarySurface = Color(0xFFFDF2F8);
 
+  static const coral = Color(0xFFF43F5E); // Hot Coral / New Badge
+  static const coralSurface = Color(0xFFFFF1F2);
+
   static const accent = Color(0xFF06B6D4); // Cyan
   static const accentLight = Color(0xFF67E8F9);
 

@@ -146,7 +146,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 path: '/products',
                 builder: (context, state) {
                   final category = state.uri.queryParameters['category'];
-                  return ProductsPage(initialCategory: category);
+                  final focus =
+                      state.uri.queryParameters['focus'] == 'true' ||
+                      state.uri.queryParameters['search'] == 'true';
+                  final voice = state.uri.queryParameters['voice'] == 'true';
+                  final filter = state.uri.queryParameters['filter'] == 'true';
+                  return ProductsPage(
+                    initialCategory: category,
+                    autoFocusSearch: focus,
+                    autoOpenVoiceSearch: voice,
+                    autoOpenFilters: filter,
+                  );
                 },
               ),
             ],

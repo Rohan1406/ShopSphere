@@ -37,6 +37,7 @@ class CheckoutStepper extends StatelessWidget {
         children: [
           for (int i = 0; i < steps.length; i++) ...[
             Expanded(
+              flex: 3,
               child: _StepItem(
                 index: i,
                 title: steps[i]['title'] as String,
@@ -52,7 +53,10 @@ class CheckoutStepper extends StatelessWidget {
               ),
             ),
             if (i < steps.length - 1)
-              _StepConnector(isCompleted: currentStep > i),
+              Expanded(
+                flex: 2,
+                child: _StepConnector(isCompleted: currentStep > i),
+              ),
           ],
         ],
       ),
@@ -142,6 +146,8 @@ class _StepItem extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 12,
               fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
@@ -163,9 +169,8 @@ class _StepConnector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 32,
       height: 2.5,
-      margin: const EdgeInsets.only(bottom: 18, left: 4, right: 4),
+      margin: const EdgeInsets.only(bottom: 22, left: 4, right: 4),
       decoration: BoxDecoration(
         color: isCompleted ? AppColors.success : AppColors.border,
         borderRadius: BorderRadius.circular(2),

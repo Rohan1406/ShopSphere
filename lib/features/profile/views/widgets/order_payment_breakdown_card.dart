@@ -82,12 +82,14 @@ class OrderPaymentBreakdownCard extends StatelessWidget {
                 color: AppColors.textSecondary,
               ),
               const SizedBox(width: 6),
-              Text(
-                'Paid via ${order.paymentMethod}',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                  fontWeight: FontWeight.w500,
+              Expanded(
+                child: Text(
+                  'Paid via ${order.paymentMethod}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ],
@@ -106,10 +108,16 @@ class OrderPaymentBreakdownCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppColors.textSecondary,
+            ),
+          ),
         ),
+        const SizedBox(width: 8),
         Text(
           value,
           style: TextStyle(

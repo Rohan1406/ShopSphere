@@ -55,15 +55,18 @@ class CouponVoucherCard extends ConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            coupon.code,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 16,
-                              color: AppColors.primary,
-                              letterSpacing: 1.0,
+                          Expanded(
+                            child: Text(
+                              coupon.code,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: 16,
+                                color: AppColors.primary,
+                                letterSpacing: 1.0,
+                              ),
                             ),
                           ),
+                          const SizedBox(width: 8),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
@@ -108,24 +111,28 @@ class CouponVoucherCard extends ConsumerWidget {
               ],
             ),
             const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
+              padding: EdgeInsets.symmetric(vertical: 10),
               child: Divider(height: 1, color: AppColors.borderLight),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              runSpacing: 8,
               children: [
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(
                       Icons.timer_outlined,
-                      size: 14,
+                      size: 13,
                       color: AppColors.textSecondary,
                     ),
                     const SizedBox(width: 4),
                     Text(
                       'Valid until ${coupon.validUntil}',
                       style: const TextStyle(
-                        fontSize: 11.5,
+                        fontSize: 11,
                         color: AppColors.textSecondary,
                         fontWeight: FontWeight.w500,
                       ),
@@ -133,6 +140,7 @@ class CouponVoucherCard extends ConsumerWidget {
                   ],
                 ),
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     TextButton.icon(
                       onPressed: () {
@@ -146,17 +154,22 @@ class CouponVoucherCard extends ConsumerWidget {
                           ),
                         );
                       },
-                      icon: const Icon(Icons.copy_rounded, size: 14),
+                      icon: const Icon(Icons.copy_rounded, size: 13),
                       label: const Text(
                         'COPY',
                         style: TextStyle(
-                          fontSize: 11.5,
+                          fontSize: 11,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.textPrimary,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 4,
+                        ),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                     ),
                     const SizedBox(width: 6),
@@ -195,9 +208,11 @@ class CouponVoucherCard extends ConsumerWidget {
                         foregroundColor: AppColors.primary,
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
+                          horizontal: 10,
+                          vertical: 6,
                         ),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -206,7 +221,7 @@ class CouponVoucherCard extends ConsumerWidget {
                         'Apply on Cart',
                         style: TextStyle(
                           fontWeight: FontWeight.w800,
-                          fontSize: 11.5,
+                          fontSize: 11,
                         ),
                       ),
                     ),
