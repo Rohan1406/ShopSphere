@@ -6,10 +6,7 @@ import 'package:shopsphere/core/mock/dummy_data.dart';
 
 /// Interactive Voice Search Simulation Modal with animated soundwaves and speech recognition demo.
 class VoiceSearchModal extends StatefulWidget {
-  const VoiceSearchModal({
-    required this.onQueryRecognized,
-    super.key,
-  });
+  const VoiceSearchModal({required this.onQueryRecognized, super.key});
 
   final ValueChanged<String> onQueryRecognized;
 
@@ -21,9 +18,8 @@ class VoiceSearchModal extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => VoiceSearchModal(
-        onQueryRecognized: onQueryRecognized,
-      ),
+      builder: (context) =>
+          VoiceSearchModal(onQueryRecognized: onQueryRecognized),
     );
   }
 
@@ -66,7 +62,8 @@ class _VoiceSearchModalState extends State<VoiceSearchModal>
 
     _simulationTimer = Timer(const Duration(milliseconds: 2200), () {
       if (!mounted || !_isListening) return;
-      final prompts = List<String>.from(DummyData.voiceSearchPrompts)..shuffle();
+      final prompts = List<String>.from(DummyData.voiceSearchPrompts)
+        ..shuffle();
       final sample = prompts.first;
       _simulateVoiceInput(sample);
     });
@@ -147,245 +144,258 @@ class _VoiceSearchModalState extends State<VoiceSearchModal>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-          // Drag Handle
-          Container(
-            width: 40,
-            height: 4.5,
-            decoration: BoxDecoration(
-              color: AppColors.borderLight,
-              borderRadius: BorderRadius.circular(3),
-            ),
-          ),
-          const SizedBox(height: 18),
-
-          // Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: AppColors.primarySurface,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.mic_rounded,
-                      color: AppColors.primary,
-                      size: 18,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Voice Search (AI Simulation)',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.2,
-                    ),
-                  ),
-                ],
-              ),
-              IconButton(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.close_rounded),
-                tooltip: 'Close',
-                visualDensity: VisualDensity.compact,
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-
-          // Pulsating Animated Microphone Visualizer
-          Center(
-            child: GestureDetector(
-              onTap: () {
-                if (!_isListening) {
-                  setState(() {
-                    _isListening = true;
-                    _isRecognized = false;
-                    _recognizedQuery = '';
-                    _statusMessage = 'Listening... Speak now';
-                  });
-                  _startDefaultSimulation();
-                }
-              },
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Outer expanding pulse ring 2
-                  AnimatedBuilder(
-                    animation: _pulseController,
-                    builder: (context, child) {
-                      final scale = 1.0 + (_pulseController.value * 0.6);
-                      final opacity = (1.0 - _pulseController.value).clamp(0.0, 1.0);
-                      return Transform.scale(
-                        scale: _isListening ? scale : 1.0,
-                        child: Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.primary.withValues(
-                              alpha: _isListening ? opacity * 0.18 : 0.0,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-
-                  // Outer expanding pulse ring 1
-                  AnimatedBuilder(
-                    animation: _pulseController,
-                    builder: (context, child) {
-                      final scale = 1.0 + (_pulseController.value * 0.35);
-                      final opacity = (1.0 - _pulseController.value).clamp(0.0, 1.0);
-                      return Transform.scale(
-                        scale: _isListening ? scale : 1.0,
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.primary.withValues(
-                              alpha: _isListening ? opacity * 0.3 : 0.0,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-
-                  // Main Core Mic Button
-                  Container(
-                    width: 76,
-                    height: 76,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: _isRecognized
-                          ? AppColors.emeraldGradient
-                          : AppColors.primaryGradient,
-                      boxShadow: [
-                        BoxShadow(
-                          color: (_isRecognized
-                                  ? AppColors.success
-                                  : AppColors.primary)
-                              .withValues(alpha: 0.4),
-                          blurRadius: 18,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      _isRecognized ? Icons.check_rounded : Icons.mic_rounded,
-                      color: Colors.white,
-                      size: 36,
-                    ),
-                  ),
-                ],
+            // Drag Handle
+            Container(
+              width: 40,
+              height: 4.5,
+              decoration: BoxDecoration(
+                color: AppColors.borderLight,
+                borderRadius: BorderRadius.circular(3),
               ),
             ),
-          ),
-          const SizedBox(height: 20),
+            const SizedBox(height: 18),
 
-          // Animated Audio Waveform Bars
-          if (_isListening)
-            AnimatedBuilder(
-              animation: _waveController,
-              builder: (context, child) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(7, (index) {
-                    final factor = math.sin((_waveController.value * math.pi) + (index * 0.5)).abs();
-                    final height = 8.0 + (factor * 22.0);
-                    return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 2.5),
-                      width: 4,
-                      height: height,
+            // Header
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(
-                          alpha: 0.4 + (factor * 0.6),
-                        ),
-                        borderRadius: BorderRadius.circular(3),
+                        color: AppColors.primarySurface,
+                        shape: BoxShape.circle,
                       ),
-                    );
-                  }),
-                );
-              },
+                      child: const Icon(
+                        Icons.mic_rounded,
+                        color: AppColors.primary,
+                        size: 18,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Voice Search (AI Simulation)',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close_rounded),
+                  tooltip: 'Close',
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
             ),
-          const SizedBox(height: 14),
+            const SizedBox(height: 24),
 
-          // Status & Recognized Query
-          Text(
-            _statusMessage,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: _isRecognized ? AppColors.success : AppColors.textSecondary,
-            ),
-          ),
-          const SizedBox(height: 8),
+            // Pulsating Animated Microphone Visualizer
+            Center(
+              child: GestureDetector(
+                onTap: () {
+                  if (!_isListening) {
+                    setState(() {
+                      _isListening = true;
+                      _isRecognized = false;
+                      _recognizedQuery = '';
+                      _statusMessage = 'Listening... Speak now';
+                    });
+                    _startDefaultSimulation();
+                  }
+                },
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Outer expanding pulse ring 2
+                    AnimatedBuilder(
+                      animation: _pulseController,
+                      builder: (context, child) {
+                        final scale = 1.0 + (_pulseController.value * 0.6);
+                        final opacity = (1.0 - _pulseController.value).clamp(
+                          0.0,
+                          1.0,
+                        );
+                        return Transform.scale(
+                          scale: _isListening ? scale : 1.0,
+                          child: Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.primary.withValues(
+                                alpha: _isListening ? opacity * 0.18 : 0.0,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
 
-          // Speech Preview Box
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceSubtle,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: _isRecognized
-                    ? AppColors.success.withValues(alpha: 0.4)
-                    : AppColors.borderLight,
+                    // Outer expanding pulse ring 1
+                    AnimatedBuilder(
+                      animation: _pulseController,
+                      builder: (context, child) {
+                        final scale = 1.0 + (_pulseController.value * 0.35);
+                        final opacity = (1.0 - _pulseController.value).clamp(
+                          0.0,
+                          1.0,
+                        );
+                        return Transform.scale(
+                          scale: _isListening ? scale : 1.0,
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.primary.withValues(
+                                alpha: _isListening ? opacity * 0.3 : 0.0,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+
+                    // Main Core Mic Button
+                    Container(
+                      width: 76,
+                      height: 76,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: _isRecognized
+                            ? AppColors.emeraldGradient
+                            : AppColors.primaryGradient,
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                (_isRecognized
+                                        ? AppColors.success
+                                        : AppColors.primary)
+                                    .withValues(alpha: 0.4),
+                            blurRadius: 18,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        _isRecognized ? Icons.check_rounded : Icons.mic_rounded,
+                        color: Colors.white,
+                        size: 36,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            child: Text(
-              _recognizedQuery.isNotEmpty
-                  ? '"$_recognizedQuery"'
-                  : 'Say something like "Sony Headphones" or tap below...',
-              textAlign: TextAlign.center,
+            const SizedBox(height: 20),
+
+            // Animated Audio Waveform Bars
+            if (_isListening)
+              AnimatedBuilder(
+                animation: _waveController,
+                builder: (context, child) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(7, (index) {
+                      final factor = math
+                          .sin(
+                            (_waveController.value * math.pi) + (index * 0.5),
+                          )
+                          .abs();
+                      final height = 8.0 + (factor * 22.0);
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 2.5),
+                        width: 4,
+                        height: height,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(
+                            alpha: 0.4 + (factor * 0.6),
+                          ),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      );
+                    }),
+                  );
+                },
+              ),
+            const SizedBox(height: 14),
+
+            // Status & Recognized Query
+            Text(
+              _statusMessage,
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: _recognizedQuery.isNotEmpty
-                    ? FontWeight.w700
-                    : FontWeight.normal,
-                color: _recognizedQuery.isNotEmpty
-                    ? AppColors.textPrimary
-                    : AppColors.textMuted,
-                fontStyle: _recognizedQuery.isNotEmpty
-                    ? FontStyle.normal
-                    : FontStyle.italic,
-              ),
-            ),
-          ),
-          const SizedBox(height: 22),
-
-          // Quick Simulation Prompt Chips
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Or tap a prompt to test simulated voice recognition:',
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: AppColors.textSecondary,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
+                color: _isRecognized
+                    ? AppColors.success
+                    : AppColors.textSecondary,
               ),
             ),
-          ),
-          const SizedBox(height: 10),
+            const SizedBox(height: 8),
 
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _buildPromptChip('🎧 Sony Headphones'),
-              _buildPromptChip('👟 Nike Air Max'),
-              _buildPromptChip('⌚ Apple Watch'),
-              _buildPromptChip('⌨️ Mechanical Keyboard'),
-              _buildPromptChip('🕶️ Polarized Sunglasses'),
-            ],
-          ),
-        ],
+            // Speech Preview Box
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceSubtle,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: _isRecognized
+                      ? AppColors.success.withValues(alpha: 0.4)
+                      : AppColors.borderLight,
+                ),
+              ),
+              child: Text(
+                _recognizedQuery.isNotEmpty
+                    ? '"$_recognizedQuery"'
+                    : 'Say something like "Sony Headphones" or tap below...',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: _recognizedQuery.isNotEmpty
+                      ? FontWeight.w700
+                      : FontWeight.normal,
+                  color: _recognizedQuery.isNotEmpty
+                      ? AppColors.textPrimary
+                      : AppColors.textMuted,
+                  fontStyle: _recognizedQuery.isNotEmpty
+                      ? FontStyle.normal
+                      : FontStyle.italic,
+                ),
+              ),
+            ),
+            const SizedBox(height: 22),
+
+            // Quick Simulation Prompt Chips
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Or tap a prompt to test simulated voice recognition:',
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _buildPromptChip('🎧 Sony Headphones'),
+                _buildPromptChip('👟 Nike Air Max'),
+                _buildPromptChip('⌚ Apple Watch'),
+                _buildPromptChip('⌨️ Mechanical Keyboard'),
+                _buildPromptChip('🕶️ Polarized Sunglasses'),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -403,9 +413,7 @@ class _VoiceSearchModalState extends State<VoiceSearchModal>
       ),
       backgroundColor: AppColors.surfaceSubtle,
       side: const BorderSide(color: AppColors.borderLight),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onPressed: () => _simulateVoiceInput(cleanQuery),
     );
   }

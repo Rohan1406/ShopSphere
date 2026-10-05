@@ -111,7 +111,10 @@ class OrderPaymentBreakdownCard extends StatelessWidget {
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppColors.textSecondary,
+            ),
           ),
         ),
         const SizedBox(width: 8),

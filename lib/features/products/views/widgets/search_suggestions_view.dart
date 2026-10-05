@@ -124,7 +124,10 @@ class SearchSuggestionsView extends ConsumerWidget {
                     visualDensity: VisualDensity.compact,
                     foregroundColor: AppColors.textSecondary,
                   ),
-                  child: const Text('Clear All', style: TextStyle(fontSize: 12)),
+                  child: const Text(
+                    'Clear All',
+                    style: TextStyle(fontSize: 12),
+                  ),
                 ),
               ],
             ),
@@ -153,7 +156,9 @@ class SearchSuggestionsView extends ConsumerWidget {
                   ),
                   onPressed: () => onQuerySelected(query),
                   onDeleted: () {
-                    ref.read(recentSearchesProvider.notifier).removeSearch(query);
+                    ref
+                        .read(recentSearchesProvider.notifier)
+                        .removeSearch(query);
                   },
                   deleteIconColor: AppColors.textMuted,
                   deleteIcon: const Icon(Icons.close_rounded, size: 14),

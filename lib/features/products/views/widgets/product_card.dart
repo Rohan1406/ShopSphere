@@ -148,7 +148,11 @@ class _ProductInformation extends ConsumerWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.star_rounded, size: 13, color: AppColors.amber),
+                  const Icon(
+                    Icons.star_rounded,
+                    size: 13,
+                    color: AppColors.amber,
+                  ),
                   const SizedBox(width: 3),
                   Text(
                     product.rating.toStringAsFixed(1),

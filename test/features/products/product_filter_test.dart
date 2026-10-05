@@ -270,11 +270,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: const MaterialApp(
-            home: Scaffold(
-              body: ProductFilterSheet(),
-            ),
-          ),
+          child: const MaterialApp(home: Scaffold(body: ProductFilterSheet())),
         ),
       );
 
@@ -335,9 +331,7 @@ void main() {
         UncontrolledProviderScope(
           container: container,
           child: const MaterialApp(
-            home: Scaffold(
-              body: ActiveFilterChipsBar(),
-            ),
+            home: Scaffold(body: ActiveFilterChipsBar()),
           ),
         ),
       );

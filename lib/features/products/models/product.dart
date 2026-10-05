@@ -44,7 +44,8 @@ class Product {
       category: (json['category'] as String?) ?? 'general',
       brand: (json['brand'] as String?) ?? 'ShopSphere',
       rating: ((json['rating'] ?? 4.5) as num).toDouble(),
-      reviewsCount: ((json['reviewsCount'] ?? json['reviewCount'] ?? 120) as num).toInt(),
+      reviewsCount:
+          ((json['reviewsCount'] ?? json['reviewCount'] ?? 120) as num).toInt(),
       inStock: (json['inStock'] as bool?) ?? true,
       isNewArrival: (json['isNewArrival'] as bool?) ?? false,
       createdAt: parsedCreatedAt,

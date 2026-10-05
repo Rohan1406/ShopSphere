@@ -30,7 +30,10 @@ void main() {
       for (int i = 0; i < 10; i++) {
         notifier.addSearch('Query $i');
       }
-      expect(container.read(recentSearchesProvider).length, lessThanOrEqualTo(8));
+      expect(
+        container.read(recentSearchesProvider).length,
+        lessThanOrEqualTo(8),
+      );
     });
 
     test('removeSearch and clearSearches operate correctly', () {
@@ -39,10 +42,16 @@ void main() {
 
       final notifier = container.read(recentSearchesProvider.notifier);
       notifier.addSearch('Item to delete');
-      expect(container.read(recentSearchesProvider).contains('Item to delete'), isTrue);
+      expect(
+        container.read(recentSearchesProvider).contains('Item to delete'),
+        isTrue,
+      );
 
       notifier.removeSearch('Item to delete');
-      expect(container.read(recentSearchesProvider).contains('Item to delete'), isFalse);
+      expect(
+        container.read(recentSearchesProvider).contains('Item to delete'),
+        isFalse,
+      );
 
       notifier.clearSearches();
       expect(container.read(recentSearchesProvider), isEmpty);
@@ -59,40 +68,41 @@ void main() {
   });
 
   group('VoiceSearchModal Widget', () {
-    testWidgets('renders animated microphone and triggers query recognition via prompt chip', (
-      tester,
-    ) async {
-      String recognized = '';
+    testWidgets(
+      'renders animated microphone and triggers query recognition via prompt chip',
+      (tester) async {
+        String recognized = '';
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: VoiceSearchModal(
-              onQueryRecognized: (query) {
-                recognized = query;
-              },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: VoiceSearchModal(
+                onQueryRecognized: (query) {
+                  recognized = query;
+                },
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      // Verify initial UI elements
-      expect(find.text('Voice Search (AI Simulation)'), findsOneWidget);
-      expect(find.text('Listening... Speak now'), findsOneWidget);
-      expect(find.byIcon(Icons.mic_rounded), findsWidgets);
+        // Verify initial UI elements
+        expect(find.text('Voice Search (AI Simulation)'), findsOneWidget);
+        expect(find.text('Listening... Speak now'), findsOneWidget);
+        expect(find.byIcon(Icons.mic_rounded), findsWidgets);
 
-      // Tap on prompt chip '🎧 Sony Headphones'
-      final promptChip = find.text('🎧 Sony Headphones');
-      expect(promptChip, findsOneWidget);
-      await tester.tap(promptChip);
+        // Tap on prompt chip '🎧 Sony Headphones'
+        final promptChip = find.text('🎧 Sony Headphones');
+        expect(promptChip, findsOneWidget);
+        await tester.tap(promptChip);
 
-      // Pump through the simulated typing periodic timer
-      await tester.pump(const Duration(milliseconds: 500));
-      await tester.pump(const Duration(milliseconds: 1000));
-      await tester.pump(const Duration(milliseconds: 1500));
+        // Pump through the simulated typing periodic timer
+        await tester.pump(const Duration(milliseconds: 500));
+        await tester.pump(const Duration(milliseconds: 1000));
+        await tester.pump(const Duration(milliseconds: 1500));
 
-      expect(recognized, contains('Sony'));
-    });
+        expect(recognized, contains('Sony'));
+      },
+    );
   });
 
   group('SearchSuggestionsView Widget', () {

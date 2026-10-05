@@ -27,44 +27,46 @@ class _FakeLoadedProductController extends ProductController {
 
 void main() {
   group('ProductsPage Integrated Search, Voice & Filter Sheet', () {
-    testWidgets('renders search field, mic button, filter button, and category filters', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            productControllerProvider.overrideWith(
-              () => _FakeLoadedProductController(),
-            ),
-          ],
-          child: const MaterialApp(
-            home: ProductsPage(),
+    testWidgets(
+      'renders search field, mic button, filter button, and category filters',
+      (tester) async {
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              productControllerProvider.overrideWith(
+                () => _FakeLoadedProductController(),
+              ),
+            ],
+            child: const MaterialApp(home: ProductsPage()),
           ),
-        ),
-      );
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      // Check App Bar & Actions
-      expect(find.text('Product Catalog'), findsOneWidget);
-      expect(find.byIcon(Icons.tune_rounded), findsWidgets);
-      expect(find.byIcon(Icons.mic_rounded), findsOneWidget);
-      expect(find.byType(TextField), findsOneWidget);
+        // Check App Bar & Actions
+        expect(find.text('Product Catalog'), findsOneWidget);
+        expect(find.byIcon(Icons.tune_rounded), findsWidgets);
+        expect(find.byIcon(Icons.mic_rounded), findsOneWidget);
+        expect(find.byType(TextField), findsOneWidget);
 
-      // Search by brand name
-      await tester.enterText(find.byType(TextField), 'Apple');
-      await tester.pumpAndSettle();
+        // Search by brand name
+        await tester.enterText(find.byType(TextField), 'Apple');
+        await tester.pumpAndSettle();
 
-      expect(find.textContaining('Apple Watch'), findsOneWidget);
+        expect(find.textContaining('Apple Watch'), findsOneWidget);
 
-      // Tap clear search button
-      final clearButton = find.byIcon(Icons.clear_rounded);
-      expect(clearButton, findsOneWidget);
-      await tester.tap(clearButton);
-      await tester.pumpAndSettle();
+        // Tap clear search button
+        final clearButton = find.byIcon(Icons.clear_rounded);
+        expect(clearButton, findsOneWidget);
+        await tester.tap(clearButton);
+        await tester.pumpAndSettle();
 
-      expect(find.text('Apple Watch Ultra 2 Titanium GPS + Cellular'), findsOneWidget);
-    });
+        expect(
+          find.text('Apple Watch Ultra 2 Titanium GPS + Cellular'),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('tapping filter button opens ProductFilterSheet modal', (
       tester,
@@ -76,9 +78,7 @@ void main() {
               () => _FakeLoadedProductController(),
             ),
           ],
-          child: const MaterialApp(
-            home: ProductsPage(),
-          ),
+          child: const MaterialApp(home: ProductsPage()),
         ),
       );
 
@@ -92,9 +92,7 @@ void main() {
       expect(find.text('Filters & Sort'), findsOneWidget);
     });
 
-    testWidgets('tapping mic button opens VoiceSearchModal', (
-      tester,
-    ) async {
+    testWidgets('tapping mic button opens VoiceSearchModal', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -102,9 +100,7 @@ void main() {
               () => _FakeLoadedProductController(),
             ),
           ],
-          child: const MaterialApp(
-            home: ProductsPage(),
-          ),
+          child: const MaterialApp(home: ProductsPage()),
         ),
       );
 
@@ -119,44 +115,49 @@ void main() {
       expect(find.text('Voice Search (AI Simulation)'), findsOneWidget);
     });
 
-    testWidgets('autoFocusSearch opens keyboard and pressing enter finds results', (
-      tester,
-    ) async {
-      final container = ProviderContainer(
-        overrides: [
-          productControllerProvider.overrideWith(
-            () => _FakeLoadedProductController(),
+    testWidgets(
+      'autoFocusSearch opens keyboard and pressing enter finds results',
+      (tester) async {
+        final container = ProviderContainer(
+          overrides: [
+            productControllerProvider.overrideWith(
+              () => _FakeLoadedProductController(),
+            ),
+          ],
+        );
+        addTearDown(container.dispose);
+
+        await tester.pumpWidget(
+          UncontrolledProviderScope(
+            container: container,
+            child: const MaterialApp(home: ProductsPage(autoFocusSearch: true)),
           ),
-        ],
-      );
-      addTearDown(container.dispose);
+        );
 
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
-          child: const MaterialApp(
-            home: ProductsPage(autoFocusSearch: true),
-          ),
-        ),
-      );
+        await tester.pumpAndSettle();
 
-      await tester.pumpAndSettle();
+        // Check TextField has focus
+        final textFieldFinder = find.byType(TextField);
+        expect(textFieldFinder, findsOneWidget);
+        final textField = tester.widget<TextField>(textFieldFinder);
+        expect(textField.focusNode?.hasFocus, isTrue);
 
-      // Check TextField has focus
-      final textFieldFinder = find.byType(TextField);
-      expect(textFieldFinder, findsOneWidget);
-      final textField = tester.widget<TextField>(textFieldFinder);
-      expect(textField.focusNode?.hasFocus, isTrue);
+        // Enter search query and press Enter / Search action on soft keyboard
+        await tester.enterText(textFieldFinder, 'Keychron');
+        await tester.testTextInput.receiveAction(TextInputAction.search);
+        await tester.pumpAndSettle();
 
-      // Enter search query and press Enter / Search action on soft keyboard
-      await tester.enterText(textFieldFinder, 'Keychron');
-      await tester.testTextInput.receiveAction(TextInputAction.search);
-      await tester.pumpAndSettle();
-
-      // Verify filtered result is shown and recent searches recorded
-      expect(find.text('Keychron K2 Wireless Mechanical Keyboard'), findsOneWidget);
-      expect(container.read(recentSearchesProvider).contains('Keychron'), isTrue);
-      expect(textField.focusNode?.hasFocus, isFalse);
-    });
+        // Verify filtered result is shown and recent searches recorded
+        expect(
+          find.text('Keychron K2 Wireless Mechanical Keyboard'),
+          findsOneWidget,
+        );
+        expect(
+          container.read(recentSearchesProvider).contains('Keychron'),
+          isTrue,
+        );
+        expect(textField.focusNode?.hasFocus, isFalse);
+      },
+    );
   });
 }

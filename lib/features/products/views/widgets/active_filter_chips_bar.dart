@@ -102,9 +102,7 @@ class ActiveFilterChipsBar extends ConsumerWidget {
         ),
         backgroundColor: AppColors.errorSurface,
         side: BorderSide(color: AppColors.error.withValues(alpha: 0.3)),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         onPressed: () {
           ref.read(productFilterProvider.notifier).resetFilters();
         },
@@ -138,12 +136,8 @@ class ActiveFilterChipsBar extends ConsumerWidget {
         color: AppColors.primary,
       ),
       backgroundColor: AppColors.primarySurface,
-      side: BorderSide(
-        color: AppColors.primary.withValues(alpha: 0.25),
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      side: BorderSide(color: AppColors.primary.withValues(alpha: 0.25)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       deleteIcon: const Icon(Icons.close_rounded, size: 13),
       deleteIconColor: AppColors.primary,
       onDeleted: onDeleted,

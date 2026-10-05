@@ -69,7 +69,11 @@ class _ProductFilterSheetState extends ConsumerState<ProductFilterSheet> {
     Navigator.of(context).pop();
   }
 
-  int _calculateMatchingCount(List<Product> allProducts, String category, String search) {
+  int _calculateMatchingCount(
+    List<Product> allProducts,
+    String category,
+    String search,
+  ) {
     final query = search.trim().toLowerCase();
     return allProducts.where((product) {
       final matchesCategory =
@@ -82,7 +86,8 @@ class _ProductFilterSheetState extends ConsumerState<ProductFilterSheet> {
           product.category.toLowerCase().contains(query) ||
           product.brand.toLowerCase().contains(query);
       final matchesPrice =
-          product.price >= _priceRange.start && product.price <= _priceRange.end;
+          product.price >= _priceRange.start &&
+          product.price <= _priceRange.end;
       final matchesBrand =
           _selectedBrands.isEmpty ||
           _selectedBrands.any(
@@ -219,8 +224,9 @@ class _ProductFilterSheetState extends ConsumerState<ProductFilterSheet> {
                       label: Text(option.label),
                       labelStyle: TextStyle(
                         fontSize: 12.5,
-                        fontWeight:
-                            isSelected ? FontWeight.w700 : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.w500,
                         color: isSelected
                             ? Colors.white
                             : AppColors.textPrimary,
@@ -333,7 +339,10 @@ class _ProductFilterSheetState extends ConsumerState<ProductFilterSheet> {
                         style: TextButton.styleFrom(
                           visualDensity: VisualDensity.compact,
                         ),
-                        child: const Text('Clear', style: TextStyle(fontSize: 12)),
+                        child: const Text(
+                          'Clear',
+                          style: TextStyle(fontSize: 12),
+                        ),
                       ),
                   ],
                 ),
@@ -387,8 +396,9 @@ class _ProductFilterSheetState extends ConsumerState<ProductFilterSheet> {
                       ),
                       labelStyle: TextStyle(
                         fontSize: 12.5,
-                        fontWeight:
-                            isSelected ? FontWeight.w700 : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.w500,
                         color: isSelected
                             ? Colors.white
                             : AppColors.textPrimary,
@@ -606,14 +616,13 @@ class _ProductFilterSheetState extends ConsumerState<ProductFilterSheet> {
         fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
         color: isSelected ? AppColors.primary : AppColors.textSecondary,
       ),
-      backgroundColor:
-          isSelected ? AppColors.primarySurface : AppColors.surfaceSubtle,
+      backgroundColor: isSelected
+          ? AppColors.primarySurface
+          : AppColors.surfaceSubtle,
       side: BorderSide(
         color: isSelected ? AppColors.primary : AppColors.borderLight,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       onPressed: () {
         setState(() {
           _priceRange = RangeValues(min, max);
@@ -628,11 +637,7 @@ class _ProductFilterSheetState extends ConsumerState<ProductFilterSheet> {
       selected: isSelected,
       showCheckmark: false,
       avatar: threshold > 0
-          ? const Icon(
-              Icons.star_rounded,
-              size: 16,
-              color: AppColors.amber,
-            )
+          ? const Icon(Icons.star_rounded, size: 16, color: AppColors.amber)
           : null,
       label: Text(label),
       labelStyle: TextStyle(
@@ -645,9 +650,7 @@ class _ProductFilterSheetState extends ConsumerState<ProductFilterSheet> {
       side: BorderSide(
         color: isSelected ? AppColors.primary : AppColors.borderLight,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       onSelected: (selected) {
         if (selected) {
           setState(() => _minRating = threshold);

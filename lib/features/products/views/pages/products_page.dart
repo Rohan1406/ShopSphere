@@ -43,7 +43,8 @@ class _ProductsPageState extends ConsumerState<ProductsPage> {
     _searchFocusNode.addListener(() {
       if (mounted) {
         setState(() {
-          _showSuggestions = _searchFocusNode.hasFocus &&
+          _showSuggestions =
+              _searchFocusNode.hasFocus &&
               _searchController.text.trim().isEmpty;
         });
       }
@@ -119,7 +120,8 @@ class _ProductsPageState extends ConsumerState<ProductsPage> {
     final filterState = ref.watch(productFilterProvider);
     final filteredProducts = ref.watch(filteredProductsProvider);
 
-    final hasAnyFilter = selectedCategory != 'all' ||
+    final hasAnyFilter =
+        selectedCategory != 'all' ||
         searchQuery.isNotEmpty ||
         filterState.hasActiveFilters;
 
@@ -416,8 +418,8 @@ class _ProductsPageState extends ConsumerState<ProductsPage> {
                 : switch (state) {
                     ProductInitial() => const SizedBox.shrink(),
                     ProductLoading() => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      child: CircularProgressIndicator(),
+                    ),
                     ProductLoaded() =>
                       filteredProducts.isEmpty
                           ? Center(
@@ -486,11 +488,11 @@ class _ProductsPageState extends ConsumerState<ProductsPage> {
                                 ),
                                 gridDelegate:
                                     const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 12,
-                                  mainAxisSpacing: 12,
-                                  childAspectRatio: 0.65,
-                                ),
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing: 12,
+                                      mainAxisSpacing: 12,
+                                      childAspectRatio: 0.65,
+                                    ),
                                 itemCount: filteredProducts.length,
                                 itemBuilder: (context, index) {
                                   return ProductGridCard(
@@ -500,49 +502,46 @@ class _ProductsPageState extends ConsumerState<ProductsPage> {
                               ),
                             ),
                     ProductError(:final failure) => Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: AppColors.errorSurface,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.error_outline_rounded,
-                                  size: 40,
-                                  color: AppColors.error,
-                                ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: AppColors.errorSurface,
+                                shape: BoxShape.circle,
                               ),
-                              const SizedBox(height: 14),
-                              Text(
-                                failure.message,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                              child: const Icon(
+                                Icons.error_outline_rounded,
+                                size: 40,
+                                color: AppColors.error,
                               ),
-                              const SizedBox(height: 18),
-                              FilledButton.icon(
-                                onPressed: () {
-                                  ref
-                                      .read(productControllerProvider.notifier)
-                                      .fetchProducts();
-                                },
-                                icon: const Icon(
-                                  Icons.refresh_rounded,
-                                  size: 18,
-                                ),
-                                label: const Text('Retry'),
+                            ),
+                            const SizedBox(height: 14),
+                            Text(
+                              failure.message,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
                               ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(height: 18),
+                            FilledButton.icon(
+                              onPressed: () {
+                                ref
+                                    .read(productControllerProvider.notifier)
+                                    .fetchProducts();
+                              },
+                              icon: const Icon(Icons.refresh_rounded, size: 18),
+                              label: const Text('Retry'),
+                            ),
+                          ],
                         ),
                       ),
+                    ),
                   },
           ),
         ],
